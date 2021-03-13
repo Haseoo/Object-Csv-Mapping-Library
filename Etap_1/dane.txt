@@ -1,0 +1,5 @@
+Wykonuje: Dawid Szymkiewicz 122B dawid_szymkiewicz@hotmail.com
+Temat: Object CSV Mapper
+Technologie: Java, bibloteki reflections, Apache OpenCSV (do parsowania, tylko plik->List<String[]>
+Temat pracy inżynierskiej: Projekt i implementacja aplikacji wspomagającej zdalną naukę.
+Temat projektu PSR: Graf Wyznaczania węzła, z którego suma minimalnych dróg do pozostałych węzłów jest minimalna. 
