@@ -1,5 +1,13 @@
 Wykonuje: Dawid Szymkiewicz 122B dawid_szymkiewicz@hotmail.com
 Temat: Object CSV Mapper
 Technologie: Java, bibloteki reflections, Apache OpenCSV (do parsowania, tylko plik->List<String[]>
+Ogólna charakterystyka: 
+Część praktyczna projektu będzie miała postać biblioteki, dzięki której użytkownik będzie mógł zapisać listę obiektów (klas z odpowiednimi adnotacjami) do pliku/ów (ciągu/ów znaków) lub odwrotnie. Część teoretyczna dotyczyć będzie sposobu realizacji odwzorowania obiektów na pliki csv w oparciu o analogię do tabel relacyjnych baz danych.
+Ogólny harmonogram:
+-do 29.03- Przygotowanie zorientowanej obiektowo formy plików csv i metadanych związanych z mapowaniem.
+-do 12.04- Przygotowanie zestawu adnotacji, służących do sterowania mapowaniem
+-do 03.05-  Przygotowanie odwzorowania obiektów na pliki/ciągi znaków w pamięci i odwrotnie dla prostych typów danych oraz wbudowanych w Javę (String, LocalDate(Time), BigInteger,  BigDecimal).
+-do 24.05- Przygotowanie odwzorowywania relacji jeden do jednego, jeden do wielu oraz wiele do wielu.
+-do 14.06- Przygotowanie odwzorowywania dziedziczenia- dwie strategie: pojedynczy plik oraz plik na klasę.
 Temat pracy inżynierskiej: Projekt i implementacja aplikacji wspomagającej zdalną naukę.
 Temat projektu PSR: Graf Wyznaczania węzła, z którego suma minimalnych dróg do pozostałych węzłów jest minimalna. 
