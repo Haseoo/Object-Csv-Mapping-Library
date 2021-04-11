@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getNonTransientFields;
+
 public class CsvMapper {
     public<T> List<T> mapFormFile(File file, Class<T> entityClass) throws IOException {
         try (
@@ -42,24 +44,6 @@ public class CsvMapper {
         }
     }
 
-    private ArrayList<Field> getNonTransientFields(Field[] fields) {
-        var fieldsToConvert = new ArrayList<Field>();
-        for(var f : fields) {
-            if (!containsTransient(f.getDeclaredAnnotations()) &&
-            !Modifier.isTransient(f.getModifiers())) {
-                fieldsToConvert.add(f);
-            }
-        }
-        return fieldsToConvert;
-    }
 
-    private boolean containsTransient(Annotation[] annotations) {
-        for(var annotation : annotations) {
-            if (annotation.annotationType().equals(CsvTransient.class)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
 }

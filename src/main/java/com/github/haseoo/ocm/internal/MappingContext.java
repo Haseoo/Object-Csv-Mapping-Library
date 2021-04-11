@@ -2,45 +2,76 @@ package com.github.haseoo.ocm.internal;
 
 import com.github.haseoo.ocm.api.converter.TypeConverter;
 import com.github.haseoo.ocm.internal.converter.*;
+import com.github.haseoo.ocm.structure.CsvEntity;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MappingContext {
-    private Map<Class<?>, TypeConverter<?>> converters = new HashMap<>();
+    private final Map<Class, TypeConverter> converters = new HashMap<>();
+    private final Map<Class, CsvEntity> registeredEntities = new HashMap<>();
+    private final Map<Class, Map<Object, Object>> parsedObjects = new HashMap<>();
 
-    MappingContext() {
-        converters.put(LocalDate.class, new DateConverter());
+    @Getter
+    private final String basePath;
+    @Getter
+    private final String splitter;
 
-        converters.put(LocalDateTime.class, new DateTimeConverter());
+    MappingContext(String basePath,
+                   String splitter) {
+        this.basePath = basePath;
+        this.splitter = splitter;
 
-        converters.put(Long.TYPE, new LongConverter());
-        converters.put(long.class, new LongConverter());
+        registerConverter(LocalDate.class, new DateConverter());
 
-        converters.put(Integer.TYPE, new IntConverter());
-        converters.put(int.class, new IntConverter());
+        registerConverter(LocalDateTime.class, new DateTimeConverter());
 
-        converters.put(Double.TYPE, new DoubleConverter());
-        converters.put(double.class, new DoubleConverter());
+        registerConverter(Long.TYPE, new LongConverter());
+        registerConverter(long.class, new LongConverter());
 
-        converters.put(Float.TYPE, new FloatConverter());
-        converters.put(float.class, new FloatConverter());
+        registerConverter(Integer.TYPE, new IntConverter());
+        registerConverter(int.class, new IntConverter());
 
-        converters.put(BigDecimal.class, new BigDecimalConverter());
-        converters.put(BigInteger.class, new BigIntegerConverter());
-        converters.put(String.class, new StringConverter());
+        registerConverter(Double.TYPE, new DoubleConverter());
+        registerConverter(double.class, new DoubleConverter());
+
+        registerConverter(Float.TYPE, new FloatConverter());
+        registerConverter(float.class, new FloatConverter());
+
+        registerConverter(BigDecimal.class, new BigDecimalConverter());
+        registerConverter(BigInteger.class, new BigIntegerConverter());
+        registerConverter(String.class, new StringConverter());
     }
 
     public <T> void registerConverter(Class<T> clazz, TypeConverter<T> converter) {
         converters.put(clazz, converter);
     }
 
+    public <T> void registerEntity(Class<T> clazz, CsvEntity<T> entity) {
+        registeredEntities.put(clazz, entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> CsvEntity<T> getRegisteredEntityOrNull(Class<T> clazz) {
+        if (!registeredEntities.containsKey(clazz)) {
+            return null;
+        }
+        return registeredEntities.get(clazz);
+    }
+
     public Object convertToObject(Class<?> clazz, String value, String formatter) {
         //TODO check if type is registered
         return converters.get(clazz).convertToType(value, formatter);
+    }
+
+    public String convertToString(Class<?> clazz, Object value, String formatter){
+        //TODO check if type is registered & object is instance of class
+        return converters.get(clazz).convertToString(value, formatter);
     }
 }

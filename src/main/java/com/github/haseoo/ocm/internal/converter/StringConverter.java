@@ -10,6 +10,6 @@ public class StringConverter implements TypeConverter<String> {
 
     @Override
     public String convertToString(String value, String formatter) {
-        return value;
+        return String.format("\"%s\"", value.replace("\"","\"\""));
     }
 }
