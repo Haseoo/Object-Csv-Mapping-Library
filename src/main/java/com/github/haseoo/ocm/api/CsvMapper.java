@@ -37,11 +37,6 @@ public class CsvMapper {
             //TODO throw exception
         }
 
-        ArrayList<Field> fieldsToConvert = getNonTransientFields(fields);
-
-        for(var f : fieldsToConvert) {
-            System.out.println(f);
-        }
     }
 
 

@@ -1,23 +1,24 @@
 package com.github.haseoo.ocm.structure.cell;
 
 import com.github.haseoo.ocm.internal.MappingContext;
+import com.github.haseoo.ocm.structure.CsvColumn;
 import lombok.Value;
 
 @Value
-public class CsvDirectType<T> implements CsvData {
+public class CsvDirectType implements CsvData {
     MappingContext mappingContext;
+    CsvColumn column;
     String stringValue;
-    T objectValue;
+    Object objectValue;
     String formatter;
-    Class<T> clazz;
 
     @Override
     public Object resolveToObject() {
         if (stringValue == null) {
             return objectValue;
         }
-        var obj = mappingContext.convertToObject(clazz, stringValue, formatter);
-        return clazz.cast(obj);
+        var obj = mappingContext.convertToObject(column.getJavaClass(), stringValue, formatter);
+        return column.getJavaClass().cast(obj);
     }
 
     @Override
@@ -25,28 +26,28 @@ public class CsvDirectType<T> implements CsvData {
         if (objectValue == null) {
             return stringValue;
         }
-        return mappingContext.convertToString(clazz, objectValue, formatter);
+        return mappingContext.convertToString(column.getJavaClass(), objectValue, formatter);
     }
 
-    public static<T> CsvDirectType<T> getInstance(MappingContext mappingContext,
-                                               Class<T> clazz,
-                                               T obj,
+    public static CsvDirectType getInstance(MappingContext mappingContext,
+                                               CsvColumn column,
+                                               Object obj,
                                                String formatter) {
-        return new CsvDirectType<>(mappingContext,
+        return new CsvDirectType(mappingContext,
+                column,
                 null,
                 obj,
-                formatter,
-                clazz);
+                formatter);
     }
 
-    public static<T> CsvDirectType<T> getInstance(MappingContext mappingContext,
-                                                  Class<T> clazz,
-                                                  String string,
+    public static CsvDirectType getInstance(MappingContext mappingContext,
+                                                  CsvColumn column,
+                                                  String stringValue,
                                                   String formatter) {
-        return new CsvDirectType<>(mappingContext,
-                string,
+        return new CsvDirectType(mappingContext,
+                column,
+                stringValue,
                 null,
-                formatter,
-                clazz);
+                formatter);
     }
 }

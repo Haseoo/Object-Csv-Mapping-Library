@@ -7,10 +7,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 
 @UtilityClass
 public class ReflectionUtils {
-    public static ArrayList<Field> getNonTransientFields(Field[] fields) {
+    public static List<Field> getNonTransientFields(Field[] fields) {
         var fieldsToConvert = new ArrayList<Field>();
         for(var f : fields) {
             if (!containsTransient(f.getDeclaredAnnotations()) &&
@@ -28,5 +29,9 @@ public class ReflectionUtils {
             }
         }
         return false;
+    }
+
+    public static String getGetterName(String fieldName) {
+        return String.format("get%s", fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
     }
 }

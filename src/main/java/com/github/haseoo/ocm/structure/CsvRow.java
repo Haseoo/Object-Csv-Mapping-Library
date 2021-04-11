@@ -1,49 +1,62 @@
 package com.github.haseoo.ocm.structure;
 
 import com.github.haseoo.ocm.internal.MappingContext;
+import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.cell.CsvData;
+import com.github.haseoo.ocm.structure.cell.CsvDirectType;
 import com.github.haseoo.ocm.structure.enums.HeaderType;
+import lombok.SneakyThrows;
 import lombok.Value;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
-@Value
-public class CsvRow<T> implements CsvData {
-    CsvHeader header;
-    MappingContext mappingContext;
-    Class<T> clazz;
-    T rowObject;
-    String[] rowStringValues;
 
-    public static <T> CsvRow<T> getInstance(MappingContext mappingContext,
-                                     CsvHeader header,
-                                     Class<T> clazz,
-                                     T rowObject) {
-        return new CsvRow<>(header, mappingContext, clazz, rowObject, null);
+@Value
+public class CsvRow implements CsvData {
+    MappingContext mappingContext;
+    CsvHeader header;
+    List<CsvData> cells;
+
+    @SneakyThrows
+    public static CsvRow getInstance(MappingContext mappingContext,
+                                            CsvHeader header,
+                                            Object rowObject) {
+        final var cells = new ArrayList<CsvData>();
+
+        final var valueTypeColumns = header.getHeaderColumns().stream()
+                .filter(c -> c.getHeaderType().equals(HeaderType.VALUE))
+                .collect(toList());
+
+        for (CsvColumn valueTypeColumn : valueTypeColumns) {
+            //var formatter; TODO get formatter form annotation
+            var obj  = header.getRowType()
+                    .getMethod(ReflectionUtils.getGetterName(valueTypeColumn.getFieldName()))
+                    .invoke(rowObject);
+            cells.add(CsvDirectType.getInstance(mappingContext, valueTypeColumn, obj, null));
+        }
+        return new CsvRow(mappingContext, header, cells);
+
     }
-    public static  <T> CsvRow<T> getInstance(MappingContext mappingContext,
+    public static CsvRow getInstance(MappingContext mappingContext,
                                      CsvHeader header,
-                                     Class<T> clazz,
                                      String[] values) {
-        return new CsvRow<>(header, mappingContext, clazz, null, values);
+        return null; //TODO
     }
 
 
     @Override
     public Object resolveToObject() {
-        if (rowStringValues == null) {
-            return rowObject;
-        }
+
         return null; //TODO
     }
 
     @Override
     public String resolveString() {
-        if(rowObject == null) {
-            return String.join(mappingContext.getSplitter(), rowStringValues);
-        }
-        return null; //TODO
+        return cells.stream().map(CsvData::resolveString).collect(joining(mappingContext.getSplitter()));
     }
 }

@@ -23,7 +23,7 @@ public class MappingContext {
     @Getter
     private final String splitter;
 
-    MappingContext(String basePath,
+    public MappingContext(String basePath,
                    String splitter) {
         this.basePath = basePath;
         this.splitter = splitter;

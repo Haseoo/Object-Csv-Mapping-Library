@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.List;
 
 @Value
-public class CsvFile {
+public class CsvFileManager {
     String filePath;
 
     public List<String[]> getRows() throws IOException {

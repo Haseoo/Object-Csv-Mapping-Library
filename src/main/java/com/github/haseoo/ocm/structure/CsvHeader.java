@@ -13,19 +13,20 @@ import java.util.function.Consumer;
 @Value
 public class CsvHeader {
     List<CsvColumn> headerColumns;
+    Class<?> rowType;
 
-    public static CsvHeader getInstance(List<Field> fields) {
+    public static  CsvHeader getInstance(List<Field> fields, Class<?> rowType) {
         final var columns = new ArrayList<CsvColumn>(fields.size());
         IterateThoughtFeels(fields,
                 (field, type) -> columns.add(CsvColumn.getInstance(field, fields.indexOf(field), type)));
-        return new CsvHeader(columns);
+        return new CsvHeader(columns, rowType);
     }
 
-    public static CsvHeader getInstance(List<Field> fields, String className) {
+    public static <T> CsvHeader getInstance(List<Field> fields, Class<T> rowType, String className) {
         final var columns = new ArrayList<CsvColumn>(fields.size());
         IterateThoughtFeels(fields,
                 (field, type) -> columns.add(CsvColumn.getInstance(field, fields.indexOf(field),  type, className)));
-        return new CsvHeader(columns);
+        return new CsvHeader(columns, rowType);
     }
 
     private static void IterateThoughtFeels(List<Field> fields,
