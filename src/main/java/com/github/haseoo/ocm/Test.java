@@ -15,8 +15,8 @@ import java.util.Arrays;
 public class Test {
     public static void main(String[] args) throws IOException {
         final var list = new ArrayList<Foo>();
-        list.add(new Foo(11, "12", 13, "t14", BigDecimal.TEN, 3.14));
-        list.add(new Foo(21, "22", 23, "t\"24", BigDecimal.ZERO, 7D));
+        list.add(new Foo(8L,11, "12", 13, "t14", BigDecimal.TEN, 3.14));
+        list.add(new Foo(8L, 21, "22", 23, "t\"24", BigDecimal.ZERO, 7D));
         final var arr = list.toArray(new Foo[0]);
         var mc = new MappingContext("", ";");
         mc.registerConverter(int[].class, new TypeConverter<>() {

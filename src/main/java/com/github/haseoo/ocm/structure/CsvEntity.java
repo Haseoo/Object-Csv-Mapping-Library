@@ -6,6 +6,7 @@ import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
@@ -31,16 +32,14 @@ public class CsvEntity<T> {
                                                Class<T> clazz,
                                                T[] objects,
                                                boolean putClassName) {
-        if (!ReflectionUtils.isClassAnnotated(clazz, com.github.haseoo.ocm.api.annotation.CsvEntity.class)) {
-            throw new AssertionError(); //TODO
-        }
+        final String entityName = getEntityName(clazz).orElse(clazz.getSimpleName());
         CsvEntity<T> csvEntity = mappingContext.getRegisteredEntityOrNull(clazz);
         if (csvEntity == null) {
             final CsvHeader header;
             if (putClassName) {
                 header = CsvHeader.getInstance(ReflectionUtils.getNonTransientFields(clazz.getDeclaredFields()),
                         clazz,
-                        clazz.getSimpleName());
+                        entityName);
             } else {
                 header = CsvHeader.getInstance(ReflectionUtils.getNonTransientFields(clazz.getDeclaredFields()), clazz);
             }
@@ -49,7 +48,7 @@ public class CsvEntity<T> {
                 rows.add(CsvRow.getInstance(mappingContext, header, object));
             }
             csvEntity = new CsvEntity<>(mappingContext,
-                    clazz.getSimpleName(),
+                    entityName,
                     clazz,
                     header,
                     rows,
@@ -58,5 +57,13 @@ public class CsvEntity<T> {
             mappingContext.registerEntity(clazz, csvEntity);
         }
         return csvEntity;
+    }
+
+    private static Optional<String> getEntityName(Class<?> clazz) {
+        final var entityAnnotation =clazz.getDeclaredAnnotation(com.github.haseoo.ocm.api.annotation.CsvEntity.class);
+        if(entityAnnotation == null) {
+            throw new AssertionError(); //TODO
+        }
+        return (entityAnnotation.name().isEmpty()) ? Optional.empty() : Optional.of(entityAnnotation.name());
     }
 }

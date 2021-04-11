@@ -14,7 +14,7 @@ public class ReflectionUtils {
     public static List<Field> getNonTransientFields(Field[] fields) {
         var fieldsToConvert = new ArrayList<Field>();
         for(var f : fields) {
-            if (!containsAnnotation(f.getDeclaredAnnotations(), CsvTransient.class) &&
+            if (!containsAnnotation(f.getDeclaredAnnotations()) &&
                     !Modifier.isTransient(f.getModifiers())) {
                 fieldsToConvert.add(f);
             }
@@ -22,13 +22,9 @@ public class ReflectionUtils {
         return fieldsToConvert;
     }
 
-    public boolean isClassAnnotated(Class<?> clazz, Class<?> annotationType) {
-        return containsAnnotation(clazz.getDeclaredAnnotations(), annotationType);
-    }
-
-    private static boolean containsAnnotation(Annotation[] annotations, Class<?> annotationType) {
+    private static boolean containsAnnotation(Annotation[] annotations) {
         for(var annotation : annotations) {
-            if (annotation.annotationType().equals(annotationType)) {
+            if (annotation.annotationType().equals(CsvTransient.class)) {
                 return true;
             }
         }

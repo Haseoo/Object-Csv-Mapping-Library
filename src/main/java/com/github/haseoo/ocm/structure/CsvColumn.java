@@ -18,17 +18,24 @@ public class CsvColumn {
     int index;
 
     public static CsvColumn getInstance(Field field, int index, HeaderType type) {
-        return new CsvColumn(field.getName(), field.getName(), field.getType(), getFormatter(field), type, index);
+        return new CsvColumn(getRowName(field), field.getName(), field.getType(), getFormatter(field), type, index);
     }
 
     public static CsvColumn getInstance(Field field, int index, HeaderType type,  String className) {
-        return new CsvColumn(String.format("%s$%s", field.getName(), className), field.getName(), field.getType(), getFormatter(field), type, index);
+        return new CsvColumn(String.format("%s$%s", getRowName(field), className), field.getName(), field.getType(), getFormatter(field), type, index);
     }
-    private  static String getFormatter(Field field) {
-        return Arrays.stream(field.getDeclaredAnnotations())
-                .filter(a -> a.annotationType().equals(CsvFormatter.class))
-                .findAny()
-                .map(a -> ((CsvFormatter)a).value())
-                .orElse(null);
+    private static String getFormatter(Field field) {
+        var formatAnnotation = field.getDeclaredAnnotation(CsvFormatter.class);
+        if (formatAnnotation == null) {
+            return null;
+        }
+        return formatAnnotation.value();
+    }
+    private static String getRowName(Field field) {
+        var columnAnnotation = field.getDeclaredAnnotation(com.github.haseoo.ocm.api.annotation.CsvColumn.class);
+        if (columnAnnotation == null) {
+            return field.getName();
+        }
+        return columnAnnotation.name();
     }
 }
