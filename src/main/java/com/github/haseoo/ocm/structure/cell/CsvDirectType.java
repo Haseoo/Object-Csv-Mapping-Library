@@ -17,7 +17,7 @@ public class CsvDirectType implements CsvData {
         if (stringValue == null) {
             return objectValue;
         }
-        var obj = mappingContext.convertToObject(column.getJavaClass(), stringValue, formatter);
+        var obj = mappingContext.convertToObject(column.getJavaClass(), stringValue.replace("\"", ""), formatter);
         return column.getJavaClass().cast(obj);
     }
 

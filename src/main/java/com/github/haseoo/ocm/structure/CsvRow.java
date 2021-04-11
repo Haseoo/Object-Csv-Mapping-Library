@@ -33,11 +33,10 @@ public class CsvRow implements CsvData {
                 .collect(toList());
 
         for (CsvColumn valueTypeColumn : valueTypeColumns) {
-            //var formatter; TODO get formatter form annotation
             var obj  = header.getRowType()
                     .getMethod(ReflectionUtils.getGetterName(valueTypeColumn.getFieldName()))
                     .invoke(rowObject);
-            cells.add(CsvDirectType.getInstance(mappingContext, valueTypeColumn, obj, null));
+            cells.add(CsvDirectType.getInstance(mappingContext, valueTypeColumn, obj, valueTypeColumn.getFormatter()));
         }
         return new CsvRow(mappingContext, header, cells);
 

@@ -32,16 +32,16 @@ public class MappingContext {
 
         registerConverter(LocalDateTime.class, new DateTimeConverter());
 
-        registerConverter(Long.TYPE, new LongConverter());
+        registerConverter(Long.class, new LongConverter());
         registerConverter(long.class, new LongConverter());
 
-        registerConverter(Integer.TYPE, new IntConverter());
+        registerConverter(Integer.class, new IntConverter());
         registerConverter(int.class, new IntConverter());
 
-        registerConverter(Double.TYPE, new DoubleConverter());
+        registerConverter(Double.class, new DoubleConverter());
         registerConverter(double.class, new DoubleConverter());
 
-        registerConverter(Float.TYPE, new FloatConverter());
+        registerConverter(Float.class, new FloatConverter());
         registerConverter(float.class, new FloatConverter());
 
         registerConverter(BigDecimal.class, new BigDecimalConverter());

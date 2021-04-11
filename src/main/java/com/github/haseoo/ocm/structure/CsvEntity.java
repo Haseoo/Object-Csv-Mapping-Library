@@ -31,6 +31,9 @@ public class CsvEntity<T> {
                                                Class<T> clazz,
                                                T[] objects,
                                                boolean putClassName) {
+        if (!ReflectionUtils.isClassAnnotated(clazz, com.github.haseoo.ocm.api.annotation.CsvEntity.class)) {
+            throw new AssertionError(); //TODO
+        }
         CsvEntity<T> csvEntity = mappingContext.getRegisteredEntityOrNull(clazz);
         if (csvEntity == null) {
             final CsvHeader header;
