@@ -8,6 +8,6 @@ Ogólny harmonogram:
 -do 12.04- Przygotowanie zestawu adnotacji, służących do sterowania mapowaniem
 -do 03.05-  Przygotowanie odwzorowania obiektów na pliki/ciągi znaków w pamięci i odwrotnie dla prostych typów danych oraz wbudowanych w Javę (String, LocalDate(Time), BigInteger,  BigDecimal).
 -do 24.05- Przygotowanie odwzorowywania relacji jeden do jednego, jeden do wielu oraz wiele do wielu.
--do 14.06- Przygotowanie odwzorowywania dziedziczenia- dwie strategie: pojedynczy plik oraz plik na klasę.
+-do 14.06- Przygotowanie odwzorowywania dziedziczenia.
 Temat pracy inżynierskiej: Projekt i implementacja aplikacji wspomagającej zdalną naukę.
 Temat projektu PSR: Graf Wyznaczania węzła, z którego suma minimalnych dróg do pozostałych węzłów jest minimalna. 
