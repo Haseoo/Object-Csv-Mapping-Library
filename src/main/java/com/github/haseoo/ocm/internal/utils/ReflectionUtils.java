@@ -34,4 +34,13 @@ public class ReflectionUtils {
     public static String getGetterName(String fieldName) {
         return String.format("get%s", fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
     }
+
+    public static boolean isFieldAnnotatedBy(Field field, Class<? extends Annotation>...annotations) {
+        for (Class<? extends Annotation> annotation : annotations) {
+            if (field.isAnnotationPresent(annotation)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

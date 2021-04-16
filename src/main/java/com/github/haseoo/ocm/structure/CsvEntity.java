@@ -22,7 +22,7 @@ public class CsvEntity<T> {
 
     public List<String> resolveToString() {
         var returnRows = new ArrayList<String>();
-        var headerRow = header.getHeaderColumns().stream().map(CsvColumn::getRowName).collect(joining(mappingContext.getSplitter()));
+        var headerRow = header.getHeaderColumns().stream().map(CsvColumn::getColName).collect(joining(mappingContext.getSplitter()));
         returnRows.add(headerRow);
         returnRows.addAll(rows.stream().map(CsvRow::resolveString).collect(Collectors.toList()));
         return returnRows;

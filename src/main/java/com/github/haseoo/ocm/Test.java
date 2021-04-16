@@ -1,37 +1,39 @@
 package com.github.haseoo.ocm;
 
+import com.github.haseoo.ocm.api.CsvMapper;
 import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvTransient;
 import com.github.haseoo.ocm.api.converter.TypeConverter;
+import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.MappingContext;
+import com.github.haseoo.ocm.structure.entities.fields.CsvField;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 public class Test {
-    public static void main(String[] args) throws IOException {
-        final var list = new ArrayList<Foo>();
-        list.add(new Foo(8L,11, "12", 13, "t14", BigDecimal.TEN, 3.14));
-        list.add(new Foo(8L, 21, "22", 23, "t\"24", BigDecimal.ZERO, 7D));
-        final var arr = list.toArray(new Foo[0]);
-        var mc = new MappingContext("", ";");
-        mc.registerConverter(int[].class, new TypeConverter<>() {
-            @Override
-            public int[] convertToType(String value, String formatter) {
-                return new int[0];
-            }
+    public static void main(String[] args) throws CsvMappingException {
+        /*Foo foo = new Foo();
+        foo.setX(5);
+        foo.setFirst("FIRST");
+        Foo2 foo2 = new Foo2();
+        foo2.setFirst("XDDDDS");
+        foo2.setY(3.14f);
+        var cm = new CsvMapper();
+        var list = new ArrayList<BFoo>();
+        list.add(foo);
+        list.add(foo2);
+        list.add(new BFoo("SECOND"));
+        cm.arrayToCsv(list);*/
 
-            @Override
-            public String convertToString(int[] value, String formatter) {
-                return "\"" + Arrays.toString(value) + "\"";
-            }
-        });
-        var ce = com.github.haseoo.ocm.structure.CsvEntity.newInstance(mc, Foo.class, arr, true);
-        var rows = ce.resolveToString();
-        rows.forEach(System.out::println);
+        var val = "5@{java.lang.Integer}";
+        System.out.println(CsvField.hasStringTypeInfo(val));
+        System.out.println(CsvField.getTypeString(val));
+        System.out.println(CsvField.removeTypeInfo(val));
     }
 }
