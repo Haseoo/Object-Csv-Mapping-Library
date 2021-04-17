@@ -1,6 +1,7 @@
 package com.github.haseoo.ocm.internal;
 
 import com.github.haseoo.ocm.api.converter.TypeConverter;
+import com.github.haseoo.ocm.api.exceptions.ConverterNotPreset;
 import com.github.haseoo.ocm.internal.converter.*;
 import com.github.haseoo.ocm.structure.CsvEntity;
 
@@ -40,14 +41,18 @@ public class ConverterContext {
         converters.put(type, converter);
     }
 
-    public Object convertToObject(Class<?> type, String value, String formatter) {
-        //TODO check if type is registered
+    public Object convertToObject(Class<?> type, String value, String formatter) throws ConverterNotPreset {
+        if(!converters.containsKey(type)) {
+            throw new ConverterNotPreset(type);
+        }
         return converters.get(type).convertToType(value, formatter);
     }
 
     @SuppressWarnings("unchecked")
-    public String convertToString(Class<?> type, Object value, String formatter){
-        //TODO check if type is registered & object is instance of class
+    public String convertToString(Class<?> type, Object value, String formatter) throws ConverterNotPreset {
+        if(!converters.containsKey(type)) {
+            throw new ConverterNotPreset(type);
+        }
         return converters.get(type).convertToString(value, formatter);
     }
 }

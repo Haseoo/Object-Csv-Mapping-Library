@@ -1,13 +1,13 @@
 package com.github.haseoo.ocm.structure.files;
 
-import com.github.haseoo.ocm.structure.entities.CsvClass;
+import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import lombok.Value;
 
 @Value
 public class CsvFileInfoImpl implements CsvFileInfo {
-    public CsvFileInfoImpl(CsvClass csvClass, String filePath) {
+    public CsvFileInfoImpl(CsvEntityClass csvEntityClass, String filePath) {
         this.filePath = filePath;
-        fileName = csvClass.getName();
+        fileName = csvEntityClass.getName();
     }
 
     String filePath;

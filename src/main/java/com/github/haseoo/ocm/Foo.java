@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Data
 @CsvEntity(name = "TestName")
 public class Foo extends BFoo {
-    private Number x;
+    private Integer x;
 }

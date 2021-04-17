@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 public class Test {
     public static void main(String[] args) throws CsvMappingException {
-        /*Foo foo = new Foo();
+        Foo foo = new Foo();
         foo.setX(5);
         foo.setFirst("FIRST");
         Foo2 foo2 = new Foo2();
@@ -29,11 +29,6 @@ public class Test {
         list.add(foo);
         list.add(foo2);
         list.add(new BFoo("SECOND"));
-        cm.arrayToCsv(list);*/
-
-        var val = "5@{java.lang.Integer}";
-        System.out.println(CsvField.hasStringTypeInfo(val));
-        System.out.println(CsvField.getTypeString(val));
-        System.out.println(CsvField.removeTypeInfo(val));
+        cm.arrayToCsv(list);
     }
 }

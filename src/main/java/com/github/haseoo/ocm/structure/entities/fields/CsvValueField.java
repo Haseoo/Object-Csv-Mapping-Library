@@ -2,12 +2,12 @@ package com.github.haseoo.ocm.structure.entities.fields;
 
 import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;
+import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
 
 import java.lang.reflect.Field;
 
 public class CsvValueField implements CsvField {
-    private final Class<?> realType;
     private final Class<?> fieldType;
     private final String fieldName;
     private final String columnName;
@@ -15,10 +15,9 @@ public class CsvValueField implements CsvField {
 
     private final ConverterContext converterContext;
 
-    public CsvValueField(ConverterContext converterContext, Field field, Class<?> realType) {
+    public CsvValueField(ConverterContext converterContext, Field field) {
         this.converterContext = converterContext;
         fieldName = field.getName();
-        this.realType = realType;
         this.fieldType = field.getType();
         var columnAnnotation = field.getAnnotation(CsvColumn.class);
         columnName = columnAnnotation != null ? columnAnnotation.name() : fieldName;
@@ -27,17 +26,13 @@ public class CsvValueField implements CsvField {
     }
 
     @Override
-    public String toCsvStringValue(Object value) {
-        var stringValue = converterContext.convertToString(realType, value, formatter);
-        if(realType.equals(fieldType)) {
-            return stringValue;
-        }
-        return String.format("%s%s", stringValue, CsvField.getTypeSuffix(realType));
+    public String toCsvStringValue(Object value) throws CsvMappingException {
+        return converterContext.convertToString(fieldType, value, formatter);
     }
 
     @Override
-    public Object toObjectValue(String value) {
-        return converterContext.convertToObject(realType, value, formatter);
+    public Object toObjectValue(String value) throws CsvMappingException {
+        return converterContext.convertToObject(fieldType, value, formatter);
     }
 
     @Override

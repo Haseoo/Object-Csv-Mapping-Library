@@ -1,13 +1,10 @@
 package com.github.haseoo.ocm.api;
 
-import com.github.haseoo.ocm.api.annotation.CsvEntity;
-import com.github.haseoo.ocm.api.annotation.CsvManyToMany;
-import com.github.haseoo.ocm.api.annotation.CsvManyToOne;
-import com.github.haseoo.ocm.api.annotation.CsvOneToOne;
+import com.github.haseoo.ocm.api.annotation.*;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.MappingContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
-import com.github.haseoo.ocm.structure.entities.CsvClass;
+import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.entities.fields.CsvField;
 import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
 import com.github.haseoo.ocm.structure.resolvers.object.EntityObjectToRowResolver;
@@ -36,33 +33,28 @@ public class CsvMapper {
     }
 
     public <T> void arrayToCsv(List<T> objects) throws CsvMappingException {
-        List<CsvClass> ccs = new ArrayList<>();
         ObjectToStringResolverContext resolverContext = new ObjectToStringResolverContext();
         resolverContext.addObjectsToResolve(objects);
         while(resolverContext.objectsToResolve()) {
             var object = resolverContext.getObjectsToResolve();
-            //TODO if object already is resolved continue
-            var cc = getCsvEntityClass( object.getClass(), object, resolverContext);
-            ccs.add(cc);
-            try {
-                System.out.println(new EntityObjectToRowResolver(cc, object).getColumnValues());
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-                throw new CsvMappingException("Getter method not present or invalid", e);
+            var objectType = object.getClass();
+            if (resolverContext.isObjectAlreadyResolved(objectType, object)) {
+                continue;
             }
+            getCsvEntityClass(objectType, object, resolverContext);
+            resolverContext.registerResolvedObject(objectType, object);
         }
-
-        System.out.println("xD");
-
+        resolverContext.DEBUG_accessRegisteredEntityClasses();
     }
 
-    private CsvClass getCsvEntityClass(Class<?> type, Object object, ObjectToStringResolverContext resolverContext) throws CsvMappingException {
+    private CsvEntityClass getCsvEntityClass(Class<?> type, Object object, ObjectToStringResolverContext resolverContext) throws CsvMappingException {
         if(type == null || type.getAnnotation(CsvEntity.class) == null || type.equals(Object.class)) {
             return null;
         }
         if (resolverContext.isClassEntityRegistered(type)) {
             return resolverContext.getRegisteredEntityClass(type);
         }
-        var csvEntityClass = new CsvClass(type);
+        var csvEntityClass = new CsvEntityClass(type);
 
         try {
             fillEntityClass(csvEntityClass, object);
@@ -81,7 +73,7 @@ public class CsvMapper {
 
     }
 
-    private void fillEntityClass(CsvClass entityClass,
+    private void fillEntityClass(CsvEntityClass entityClass,
                                  Object entityObject)
             throws NoSuchMethodException,
                 InvocationTargetException,
@@ -93,13 +85,16 @@ public class CsvMapper {
             var fieldName = objectField.getName();
             Object fieldValue = type.getMethod(ReflectionUtils.getGetterName(fieldName)).invoke(entityObject);
             CsvField csvField;
-            csvField = getCsvField(objectField, fieldValue);
+            csvField = getCsvField(objectField);
+            if(objectField.isAnnotationPresent(CsvId.class)) {
+                entityClass.setId(new CsvValueField(mappingContext.getConverterContext(), objectField));
+            }
             entityClass.getFields().add(csvField);
         }
 
     }
 
-    private CsvField getCsvField(Field objectField, Object fieldValue) {
+    private CsvField getCsvField(Field objectField) {
         CsvField csvField;
         if (objectField.isAnnotationPresent(CsvOneToOne.class)){
             csvField = null; //TODO
@@ -112,7 +107,7 @@ public class CsvMapper {
         } else if (objectField.isAnnotationPresent(CsvManyToMany.class)) {
             csvField = null; //TODO
         } else {
-            csvField = new CsvValueField(mappingContext.getConverterContext(), objectField, fieldValue.getClass());
+            csvField = new CsvValueField(mappingContext.getConverterContext(), objectField);
         }
         return csvField;
     }

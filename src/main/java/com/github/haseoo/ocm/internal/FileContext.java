@@ -1,6 +1,6 @@
 package com.github.haseoo.ocm.internal;
 
-import com.github.haseoo.ocm.structure.entities.CsvClass;
+import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.files.CsvFileInfo;
 import com.github.haseoo.ocm.structure.files.CsvFileInfoImpl;
 
@@ -9,18 +9,18 @@ import java.util.Map;
 
 public class FileContext {
     private final String basePath;
-    private final Map<CsvClass, CsvFileInfo> files = new HashMap<>();
+    private final Map<CsvEntityClass, CsvFileInfo> files = new HashMap<>();
 
     public FileContext(String basePath) {
         this.basePath = basePath;
     }
 
-    public void registerFileInfo(CsvClass csvClass) {
-        if (csvClass.getBaseClass() == null) {
+    public void registerFileInfo(CsvEntityClass csvEntityClass) {
+        if (csvEntityClass.getBaseClass() == null) {
             return;
         }
-        files.putIfAbsent(csvClass, new CsvFileInfoImpl(csvClass, basePath));
-        registerFileInfo(csvClass.getBaseClass());
+        files.putIfAbsent(csvEntityClass, new CsvFileInfoImpl(csvEntityClass, basePath));
+        registerFileInfo(csvEntityClass.getBaseClass());
     }
 
     public CsvFileInfo getFileForClass(Class<?> type) {
