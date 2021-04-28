@@ -10,7 +10,6 @@ import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -24,8 +23,8 @@ public class CsvRow implements CsvData {
 
     @SneakyThrows
     public static CsvRow getInstance(MappingContext mappingContext,
-                                            CsvHeader header,
-                                            Object rowObject) {
+                                     CsvHeader header,
+                                     Object rowObject) {
         final var cells = new ArrayList<CsvData>();
 
         final var valueTypeColumns = header.getHeaderColumns().stream()
@@ -33,7 +32,7 @@ public class CsvRow implements CsvData {
                 .collect(toList());
 
         for (CsvColumn valueTypeColumn : valueTypeColumns) {
-            var obj  = header.getRowType()
+            var obj = header.getRowType()
                     .getMethod(ReflectionUtils.getGetterName(valueTypeColumn.getFieldName()))
                     .invoke(rowObject);
             cells.add(CsvDirectType.getInstance(mappingContext, valueTypeColumn, obj, valueTypeColumn.getFormatter()));
@@ -41,6 +40,7 @@ public class CsvRow implements CsvData {
         return new CsvRow(mappingContext, header, cells);
 
     }
+
     public static CsvRow getInstance(MappingContext mappingContext,
                                      CsvHeader header,
                                      String[] values) {

@@ -2,13 +2,16 @@ package com.github.haseoo.ocm.structure.entities;
 
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
-import com.github.haseoo.ocm.structure.cell.CsvDirectType;
+import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
+import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
+import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 import com.github.haseoo.ocm.structure.entities.fields.CsvField;
 import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,12 +46,26 @@ public class CsvEntityClass {
     }
 
     public Optional<CsvValueField> getId() {
-        if(id == null) {
-            if(baseClass == null) {
+        if (id == null) {
+            if (baseClass == null) {
                 return Optional.empty();
             }
             return baseClass.getId();
         }
         return Optional.of(id);
+    }
+
+    public void addRelatedFieldsToContext(Object entityObject,
+                                          ObjectToStringResolverContext context) throws CsvMappingException {
+        for (CsvField csvField : getFieldsWithInheritance()) {
+            try {
+                csvField.validateAndAddToContext(entityObject, context);
+            } catch (NoSuchMethodException |
+                    InvocationTargetException |
+                    IllegalAccessException |
+                    ConstraintViolationException e) {
+                throw new CsvMappingException("Csv entity object not valid", e);
+            }
+        }
     }
 }

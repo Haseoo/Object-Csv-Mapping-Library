@@ -3,7 +3,6 @@ package com.github.haseoo.ocm.internal;
 import com.github.haseoo.ocm.api.converter.TypeConverter;
 import com.github.haseoo.ocm.api.exceptions.ConverterNotPreset;
 import com.github.haseoo.ocm.internal.converter.*;
-import com.github.haseoo.ocm.structure.CsvEntity;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -42,7 +41,7 @@ public class ConverterContext {
     }
 
     public Object convertToObject(Class<?> type, String value, String formatter) throws ConverterNotPreset {
-        if(!converters.containsKey(type)) {
+        if (!converters.containsKey(type)) {
             throw new ConverterNotPreset(type);
         }
         return converters.get(type).convertToType(value, formatter);
@@ -50,7 +49,7 @@ public class ConverterContext {
 
     @SuppressWarnings("unchecked")
     public String convertToString(Class<?> type, Object value, String formatter) throws ConverterNotPreset {
-        if(!converters.containsKey(type)) {
+        if (!converters.containsKey(type)) {
             throw new ConverterNotPreset(type);
         }
         return converters.get(type).convertToString(value, formatter);

@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MappingContext {
@@ -28,7 +27,7 @@ public class MappingContext {
     private final String splitter;
 
     public MappingContext(String basePath,
-                   String splitter) {
+                          String splitter) {
         this.basePath = basePath;
         this.splitter = splitter;
         this.converterContext = new ConverterContext();
@@ -75,7 +74,7 @@ public class MappingContext {
         return converters.get(clazz).convertToType(value, formatter);
     }
 
-    public String convertToString(Class<?> clazz, Object value, String formatter){
+    public String convertToString(Class<?> clazz, Object value, String formatter) {
         //TODO check if type is registered & object is instance of class
         return converters.get(clazz).convertToString(value, formatter);
     }

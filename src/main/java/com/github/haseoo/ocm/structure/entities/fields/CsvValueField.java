@@ -4,10 +4,11 @@ import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
+import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 
 import java.lang.reflect.Field;
 
-public class CsvValueField implements CsvField {
+public final class CsvValueField implements CsvField {
     private final Class<?> fieldType;
     private final String fieldName;
     private final String columnName;
@@ -48,6 +49,16 @@ public class CsvValueField implements CsvField {
     @Override
     public Class<?> getFieldType() {
         return fieldType;
+    }
+
+    @Override
+    public boolean appendToFile() {
+        return true;
+    }
+
+    @Override
+    public void validateAndAddToContext(Object entityObject, ObjectToStringResolverContext context) {
+        //Not necessary
     }
 
 

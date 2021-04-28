@@ -60,8 +60,8 @@ public class CsvEntity<T> {
     }
 
     private static Optional<String> getEntityName(Class<?> clazz) {
-        final var entityAnnotation =clazz.getDeclaredAnnotation(com.github.haseoo.ocm.api.annotation.CsvEntity.class);
-        if(entityAnnotation == null) {
+        final var entityAnnotation = clazz.getDeclaredAnnotation(com.github.haseoo.ocm.api.annotation.CsvEntity.class);
+        if (entityAnnotation == null) {
             throw new AssertionError(); //TODO
         }
         return (entityAnnotation.name().isEmpty()) ? Optional.empty() : Optional.of(entityAnnotation.name());

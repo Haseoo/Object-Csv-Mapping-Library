@@ -30,9 +30,9 @@ public class CsvDirectType implements CsvData {
     }
 
     public static CsvDirectType getInstance(MappingContext mappingContext,
-                                               CsvColumn column,
-                                               Object obj,
-                                               String formatter) {
+                                            CsvColumn column,
+                                            Object obj,
+                                            String formatter) {
         return new CsvDirectType(mappingContext,
                 column,
                 null,
@@ -41,9 +41,9 @@ public class CsvDirectType implements CsvData {
     }
 
     public static CsvDirectType getInstance(MappingContext mappingContext,
-                                                  CsvColumn column,
-                                                  String stringValue,
-                                                  String formatter) {
+                                            CsvColumn column,
+                                            String stringValue,
+                                            String formatter) {
         return new CsvDirectType(mappingContext,
                 column,
                 stringValue,

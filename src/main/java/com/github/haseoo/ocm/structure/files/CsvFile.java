@@ -1,6 +1,5 @@
 package com.github.haseoo.ocm.structure.files;
 
-import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import lombok.AccessLevel;
@@ -22,7 +21,7 @@ public class CsvFile {
     private final List<String[]> rows;
     private final Map<String, Integer> header;
 
-    public static CsvFile FromObjects(CsvFileInfo csvFileInfo, Map<String, Integer> header ) {
+    public static CsvFile FromObjects(CsvFileInfo csvFileInfo, Map<String, Integer> header) {
         return new CsvFile(csvFileInfo, new ArrayList<>(), header);
     }
 
@@ -31,10 +30,10 @@ public class CsvFile {
         var file = new File(csvFileInfo.getFilePath());
         var parser = new CSVParserBuilder().withSeparator(delimiter).build();
 
-        try (var csvReader = new CSVReaderBuilder(Files.newBufferedReader(file.toPath(),StandardCharsets.UTF_8))
+        try (var csvReader = new CSVReaderBuilder(Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8))
                 .withCSVParser(parser).build()) {
             List<String[]> data = csvReader.readAll();
-            if(data.isEmpty()) {
+            if (data.isEmpty()) {
                 throw new AssertionError("Header not found"); //TODO
             }
             String[] headerColumns = data.get(0);
@@ -73,15 +72,15 @@ public class CsvFile {
     }
 
     public boolean addRow(String[] row) {
-        if(row.length != header.size()) {
+        if (row.length != header.size()) {
             return false;
         }
         return rows.add(row);
     }
 
-    public void writeFile(char delimiter) throws  IOException{
+    public void writeFile(char delimiter) throws IOException {
         File file = new File(csvFileInfo.getFilePath());
-        try(var br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
+        try (var br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             var rowHeader = header.keySet().stream().collect(Collectors.joining(Character.toString(delimiter)));
             br.write(rowHeader);
             br.newLine();

@@ -1,6 +1,5 @@
 package com.github.haseoo.ocm.structure;
 
-import lombok.Data;
 import lombok.Value;
 
 import java.util.List;

@@ -20,7 +20,7 @@ public class CsvFileManager {
     }
 
     public void saveFile(List<String> lines) throws IOException {
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             for (String line : lines) {
                 writer.write(line);
                 writer.newLine();

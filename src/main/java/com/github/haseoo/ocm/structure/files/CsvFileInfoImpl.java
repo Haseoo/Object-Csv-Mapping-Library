@@ -12,6 +12,7 @@ public class CsvFileInfoImpl implements CsvFileInfo {
 
     String filePath;
     String fileName;
+
     @Override
     public String getFilePath() {
         return filePath;
