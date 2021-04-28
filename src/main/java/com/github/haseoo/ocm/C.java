@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 @CsvEntity
 @NoArgsConstructor
 @AllArgsConstructor
-public class BFoo {
-    private String first;
-    @CsvOneToOne(fieldName = "nani", appendToFile = true)
-    private BFoo nani;
-    @CsvOneToOne(fieldName = "sora")
-    private C xd;
+public class C {
+    @CsvOneToOne(fieldName = "xd")
+    private BFoo sora;
 }

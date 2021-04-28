@@ -4,9 +4,9 @@ import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
-import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 
 import java.lang.reflect.Field;
+import java.util.function.Consumer;
 
 public final class CsvValueField implements CsvField {
     private final Class<?> fieldType;
@@ -57,7 +57,7 @@ public final class CsvValueField implements CsvField {
     }
 
     @Override
-    public void validateAndAddToContext(Object entityObject, ObjectToStringResolverContext context) {
+    public void validateAndAddToContext(Object entityObject, Consumer<Object> appendObject) {
         //Not necessary
     }
 

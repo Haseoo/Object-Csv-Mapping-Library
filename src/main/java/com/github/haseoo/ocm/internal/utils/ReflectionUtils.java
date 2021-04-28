@@ -10,7 +10,6 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @UtilityClass
 public class ReflectionUtils {
@@ -48,7 +47,7 @@ public class ReflectionUtils {
     }
 
     public static boolean isClassCollection(Class<?> c) {
-        return Collection.class.isAssignableFrom(c) || Map.class.isAssignableFrom(c);
+        return Collection.class.isAssignableFrom(c);
     }
 
     public static Class<?> getActualTypeArgument(Field genericField) {

@@ -30,7 +30,7 @@ public class CsvMapper {
             }
             var entityClass = getCsvEntityClass(objectType, object, resolverContext);
             if (entityClass != null) {
-                entityClass.addRelatedFieldsToContext(object, resolverContext);
+                entityClass.addRelatedFieldsToContext(object, resolverContext::addObjectToResolve);
             }
             resolverContext.registerResolvedObject(objectType, object);
         }
@@ -138,7 +138,10 @@ public class CsvMapper {
                 endRelationFieldCollectionType != relationBeginEntityType) {
             throw new RelationEndNotPresentException(fieldAnnotation.annotationType(), relationEndEntityType, fieldAnnotation.fieldName());
         }
-        return new CsvOneToManyField(resolverContext, relationBeginField, endRelationField);
+        return new CsvOneToManyField(resolverContext,
+                relationBeginField,
+                endRelationField,
+                endRelationFieldCollectionType);
     }
 
     private CsvField handleManyToOneRelation(Class<?> relationBeginEntityType,
@@ -146,15 +149,15 @@ public class CsvMapper {
             FieldIsNotACollectionException,
             RelationEndNotPresentException, ClassIsNotAnCsvEntity {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvManyToOne.class);
-        validateCollectionRelation(relationBeginEntityType, fieldAnnotation.fieldName());
+        validateCollectionRelation(relationBeginField.getType(), fieldAnnotation.fieldName());//
         var relationEndEntityType = ReflectionUtils.getActualTypeArgument(relationBeginField);
         validateRelationClass(relationEndEntityType);
         Field endRelationField = getRelationField(relationEndEntityType,
                 fieldAnnotation.fieldName(),
                 fieldAnnotation.annotationType());
         if (!endRelationField.isAnnotationPresent(CsvOneToMany.class) ||
-                relationEndEntityType != relationBeginEntityType) {
-            throw new RelationEndNotPresentException(fieldAnnotation.annotationType(), relationEndEntityType, fieldAnnotation.fieldName());
+                endRelationField.getType() != relationBeginEntityType) {
+            throw new RelationEndNotPresentException(CsvOneToMany.class, relationEndEntityType, fieldAnnotation.fieldName());
         }
         return new CsvManyToOneField(relationBeginField,
                 relationEndEntityType,
@@ -177,7 +180,7 @@ public class CsvMapper {
             FieldIsNotACollectionException,
             RelationEndNotPresentException, ClassIsNotAnCsvEntity {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvManyToMany.class);
-        validateCollectionRelation(relationBeginEntityType, fieldAnnotation.fieldName());
+        validateCollectionRelation(relationBeginField.getType(), fieldAnnotation.fieldName());
         var relationEndEntityType = ReflectionUtils.getActualTypeArgument(relationBeginField);
         validateRelationClass(relationEndEntityType);
         Field endRelationField = getRelationField(relationEndEntityType,

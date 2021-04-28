@@ -4,7 +4,6 @@ import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
 import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 import com.github.haseoo.ocm.structure.entities.fields.CsvField;
 import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
 import lombok.AccessLevel;
@@ -15,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Data
 public class CsvEntityClass {
@@ -56,10 +56,10 @@ public class CsvEntityClass {
     }
 
     public void addRelatedFieldsToContext(Object entityObject,
-                                          ObjectToStringResolverContext context) throws CsvMappingException {
+                                          Consumer<Object> appendObject) throws CsvMappingException {
         for (CsvField csvField : getFieldsWithInheritance()) {
             try {
-                csvField.validateAndAddToContext(entityObject, context);
+                csvField.validateAndAddToContext(entityObject, appendObject);
             } catch (NoSuchMethodException |
                     InvocationTargetException |
                     IllegalAccessException |

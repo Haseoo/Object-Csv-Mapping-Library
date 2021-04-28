@@ -3,7 +3,6 @@ package com.github.haseoo.ocm.structure.entities.fields;
 import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.MappingContext;
-import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import org.apache.commons.lang3.NotImplementedException;
@@ -12,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public final class CsvManyToManyField implements CsvField {
     private final EntityIdResolver entityIdResolver;
@@ -68,24 +68,24 @@ public final class CsvManyToManyField implements CsvField {
 
     @Override
     public void validateAndAddToContext(Object entityObject,
-                                        ObjectToStringResolverContext context) throws
+                                        Consumer<Object> appendObject) throws
             NoSuchMethodException,
             InvocationTargetException,
             IllegalAccessException,
             ConstraintViolationException {
-        var relationEndObjects = (Collection<?>) entityObject.getClass()
-                .getMethod(ReflectionUtils.getGetterName(getFieldName()))
+        var relationEndObjects = (Collection<?>) endRelation.getType()
+                .getMethod(ReflectionUtils.getGetterName(beginRelation.getFieldName()))
                 .invoke(entityObject);
         if (relationEndObjects != null) {
             for (Object relationEndObject : relationEndObjects) {
-                var relationBeginFromEndObject = (Collection<?>) endRelation.getType()
+                var relationBeginFromEndObject = (Collection<?>) beginRelation.getType()
                         .getMethod(ReflectionUtils.getGetterName(endRelation.getFieldName()))
                         .invoke(relationEndObject);
                 if (relationBeginFromEndObject.stream().noneMatch(obj -> obj == entityObject)) {
-                    throw new ConstraintViolationException(beginRelation.getType(), beginRelation.getFieldName());
+                    throw new ConstraintViolationException(beginRelation.getType(), endRelation.getFieldName());
                 }
             }
-            context.addObjectsToResolve(relationEndObjects);
+            relationEndObjects.forEach(appendObject);
         }
     }
 }
