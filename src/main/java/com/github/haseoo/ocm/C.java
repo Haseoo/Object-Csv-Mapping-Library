@@ -16,8 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class C {
-    @CsvId
-    private UUID id = UUID.randomUUID();
+    /*@CsvId
+    private UUID id = UUID.randomUUID();*/
     @CsvManyToMany(fieldName = "xd")
     private List<BFoo> dupaDupa = new ArrayList<>();
 }
