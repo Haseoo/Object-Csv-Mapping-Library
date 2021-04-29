@@ -13,7 +13,7 @@ public class CsvFileManager {
     public List<String[]> getRows() throws IOException {
         try (
                 Reader reader = new FileReader(new File(filePath));
-                CSVReader csvReader = new CSVReader(reader);
+                CSVReader csvReader = new CSVReader(reader)
         ) {
             return csvReader.readAll();
         }

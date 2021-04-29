@@ -10,7 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,13 +23,13 @@ public class CsvFile {
     private final Map<String, Integer> header;
     private final Map<String, Integer> headerWithRelations;
 
-    public static CsvFile FromObjects(CsvFileInfo csvFileInfo,
+    public static CsvFile fromObjects(CsvFileInfo csvFileInfo,
                                       Map<String, Integer> header,
                                       Map<String, Integer> headerWithRelations) {
         return new CsvFile(csvFileInfo, new ArrayList<>(), header, headerWithRelations);
     }
 
-    public static CsvFile FromFile(CsvFileInfo csvFileInfo, char delimiter) throws IOException {
+    public static CsvFile fromFile(CsvFileInfo csvFileInfo, char delimiter) throws IOException {
         var headerWithRelations = new HashMap<String, Integer>();
         var file = new File(csvFileInfo.getFilePath());
         var parser = new CSVParserBuilder().withSeparator(delimiter).build();
@@ -42,7 +45,7 @@ public class CsvFile {
                 headerWithRelations.put(headerColumns[i], i);
             }
             data.remove(headerColumns);
-            return new CsvFile(csvFileInfo, data,null, headerWithRelations); //TODO HEADER!!!!!!
+            return new CsvFile(csvFileInfo, data, null, headerWithRelations); //TODO HEADER!!!!!!
         }
     }
 
@@ -82,7 +85,7 @@ public class CsvFile {
     public boolean addRow(Map<String, String> row) {
         var stringRow = new String[header.size()];
         for (Map.Entry<String, Integer> headerEntry : header.entrySet()) {
-            var cellValue =  row.get(headerEntry.getKey());
+            var cellValue = row.get(headerEntry.getKey());
             stringRow[headerEntry.getValue()] = cellValue != null ? cellValue : "\"\"";
         }
         return addRow(stringRow);

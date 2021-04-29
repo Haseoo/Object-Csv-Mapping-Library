@@ -24,7 +24,7 @@ public class Test {
         foo.setRandomski(foo2);
         foo2.getXd().add(c);
         foo2.setRandomski(foo);
-        var cm = new CsvMapper();
+        var cm = new CsvMapper("", "|");
         var list = new ArrayList<BFoo>();
         //list.add(foo);
         list.add(foo2);

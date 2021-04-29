@@ -10,7 +10,6 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Consumer;
@@ -103,7 +102,7 @@ public class CsvEntityClass {
         var valuesMap = new HashMap<String, String>();
         valuesMap.put("TYPE", String.format("\"%s\"", entityObject.getClass().getCanonicalName()));
         for (CsvField csvField : getFieldsWithInheritance()) {
-            if(csvField.appendToFile()) {
+            if (csvField.appendToFile()) {
                 valuesMap.put(csvField.getColumnName(),
                         String.format("\"%s\"", csvField.toCsvStringValue(entityObject)));
             }

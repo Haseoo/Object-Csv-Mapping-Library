@@ -6,12 +6,12 @@ import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.FieldIsNotACollectionException;
 import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
 import com.github.haseoo.ocm.internal.MappingContext;
-import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.entities.fields.*;
 import com.github.haseoo.ocm.structure.files.CsvEntityFile;
 import com.github.haseoo.ocm.structure.files.CsvFile;
+import com.github.haseoo.ocm.structure.resolvers.ObjectToStringResolverContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,7 +23,11 @@ import static java.util.stream.Collectors.toList;
 
 
 public class CsvMapper {
-    private final MappingContext mappingContext = new MappingContext("basePath", "|");
+    private final MappingContext mappingContext;
+
+    public CsvMapper(String basePath, String delimiter) {
+        mappingContext = new MappingContext(basePath, delimiter);
+    }
 
     public <T> List<InMemoryCsvFile> listToCstInMemoryFile(List<T> objects) throws CsvMappingException {
         ObjectToStringResolverContext resolverContext = new ObjectToStringResolverContext();
@@ -36,7 +40,12 @@ public class CsvMapper {
             }
             var entityClass = getCsvEntityClass(objectType, object, resolverContext);
             if (entityClass != null) {
-                entityClass.addRelatedFieldsToContext(object, resolverContext::addObjectToResolve);
+                try {
+                    entityClass.addRelatedFieldsToContext(object, resolverContext::addObjectToResolve);
+                } catch (CsvMappingException e) {
+                    throw new CsvMappingException(String.format("While parsing object of type %s",
+                            objectType.getCanonicalName()), e);
+                }
             }
             resolverContext.registerResolvedObject(objectType, object);
         }
@@ -45,7 +54,7 @@ public class CsvMapper {
         for (CsvEntityFile csvFileInfo : csvFileInfos) {
             var headerWithRelations = csvFileInfo.getHeader(resolverContext::getClassFileName);
             var headerWithoutRelations = csvFileInfo.getHeader();
-            var csvFile = CsvFile.FromObjects(csvFileInfo, headerWithoutRelations, headerWithRelations);
+            var csvFile = CsvFile.fromObjects(csvFileInfo, headerWithoutRelations, headerWithRelations);
             for (Map<String, String> row : csvFileInfo.getValues()) {
                 csvFile.addRow(row);
             }
@@ -178,8 +187,7 @@ public class CsvMapper {
         }
         return new CsvManyToOneField(relationBeginField,
                 relationEndEntityType,
-                endRelationField,
-                relationBeginEntityType);
+                endRelationField);
     }
 
 

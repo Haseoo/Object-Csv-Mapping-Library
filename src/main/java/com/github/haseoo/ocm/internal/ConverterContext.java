@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ConverterContext {
     private final Map<Class, TypeConverter> converters = new HashMap<>();
@@ -34,6 +35,8 @@ public class ConverterContext {
         registerConverter(BigDecimal.class, new BigDecimalConverter());
         registerConverter(BigInteger.class, new BigIntegerConverter());
         registerConverter(String.class, new StringConverter());
+
+        registerConverter(UUID.class, new UUIDConverter());
     }
 
     public <T> void registerConverter(Class<T> type, TypeConverter<T> converter) {

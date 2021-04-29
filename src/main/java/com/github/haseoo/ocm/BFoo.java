@@ -18,7 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BFoo {
     @CsvId
-    private String id = UUID.randomUUID().toString();
+    private UUID id = UUID.randomUUID();
     private String first;
     @CsvOneToOne(fieldName = "randomski", appendToFile = true)
     private BFoo randomski;

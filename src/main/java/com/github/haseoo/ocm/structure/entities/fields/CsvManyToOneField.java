@@ -14,8 +14,7 @@ public final class CsvManyToOneField implements CsvField {
 
     public CsvManyToOneField(Field beginRelationField,
                              Class<?> beginRelationFieldType,
-                             Field endRelationField,
-                             Class<?> endRelationFieldType) {
+                             Field endRelationField) {
         this.beginRelation = new CsvRelation(beginRelationFieldType, beginRelationField);
         this.endRelation = new CsvRelation(endRelationField);
     }

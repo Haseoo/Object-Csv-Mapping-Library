@@ -1,13 +1,11 @@
-package com.github.haseoo.ocm.internal.utils;
+package com.github.haseoo.ocm.structure.resolvers;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.IdFiledNotFound;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.files.CsvEntityFile;
-import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import org.apache.commons.lang3.NotImplementedException;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -67,12 +65,6 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
     }
 
 
-    //DEBUG
-    public void DEBUG_accessRegisteredEntityClasses() {
-        var vals = registeredEntityClasses.values();
-        System.out.println("DEBUG_accessRegisteredEntityClasses");
-    }
-
     @Override
     public Object getObjectById(Object id, Class<?> type) throws CsvMappingException {
         throw new NotImplementedException("TODO!");
@@ -85,7 +77,6 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
             throw new CsvMappingException("Entity not present");
         }
         var idField = entityClass.getId().orElseThrow(() -> new IdFiledNotFound(type));
-            //var idObj = type.getMethod(ReflectionUtils.getGetterName(idField.getFieldName())).invoke(object);
         return idField.toCsvStringValue(object);
     }
 
