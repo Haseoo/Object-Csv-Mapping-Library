@@ -40,6 +40,6 @@ public class CsvEntityFile implements CsvFileInfo {
     }
 
     public Map<String, Integer> getHeader() {
-        return baseClass.getCsvHeader();
+        return baseClass.getCsvHeaderWithoutRelations();
     }
 }

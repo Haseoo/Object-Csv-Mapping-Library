@@ -55,33 +55,11 @@ public class CsvEntityClass {
     }
 
     public Map<String, Integer> getCsvHeaderWithRelations(Function<Class<?>, Optional<String>> fileNameResolver) {
-        List<CsvField> columnFields = getCsvFieldsForHeader();
-        var header = new HashMap<String, Integer>();
-        int index = columnFields.size();
-        if (!subClasses.isEmpty()) {
-            header.put("TYPE", index);
-        }
-        for (CsvField field : columnFields) {
-            if (field.appendToFile()) {
-                header.put(getColumnName(field, fileNameResolver), --index);
-            }
-        }
-        return header;
+        return getCstHeader((field) -> getColumnName(field, fileNameResolver));
     }
 
-    public Map<String, Integer> getCsvHeader() {
-        List<CsvField> columnFields = getCsvFieldsForHeader();
-        var header = new HashMap<String, Integer>();
-        int index = columnFields.size();
-        if (!subClasses.isEmpty()) {
-            header.put("TYPE", index);
-        }
-        for (CsvField field : columnFields) {
-            if (field.appendToFile()) {
-                header.put(field.getColumnName(), --index);
-            }
-        }
-        return header;
+    public Map<String, Integer> getCsvHeaderWithoutRelations() {
+        return getCstHeader(CsvField::getColumnName);
     }
 
     public void addRelatedFieldsToContext(Object entityObject,
@@ -132,6 +110,21 @@ public class CsvEntityClass {
         columnFields.removeAll(this.fields);
         columnFields.addAll(getSubClassesFields());
         return columnFields;
+    }
+
+    private Map<String, Integer> getCstHeader(Function<CsvField, String> columnName) {
+        List<CsvField> columnFields = getCsvFieldsForHeader();
+        var header = new HashMap<String, Integer>();
+        int index = 0;
+        for (CsvField field : columnFields) {
+            if (field.appendToFile()) {
+                header.put(columnName.apply(field), index++);
+            }
+        }
+        if (!subClasses.isEmpty()) {
+            header.put("TYPE", index);
+        }
+        return header;
     }
 
 
