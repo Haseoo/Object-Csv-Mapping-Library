@@ -1,5 +1,6 @@
 package com.github.haseoo.ocm.structure.files;
 
+import com.github.haseoo.ocm.api.InMemoryCsvFile;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import lombok.AccessLevel;
@@ -9,10 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -20,13 +18,16 @@ public class CsvFile {
     private final CsvFileInfo csvFileInfo;
     private final List<String[]> rows;
     private final Map<String, Integer> header;
+    private final Map<String, Integer> headerWithRelations;
 
-    public static CsvFile FromObjects(CsvFileInfo csvFileInfo, Map<String, Integer> header) {
-        return new CsvFile(csvFileInfo, new ArrayList<>(), header);
+    public static CsvFile FromObjects(CsvFileInfo csvFileInfo,
+                                      Map<String, Integer> header,
+                                      Map<String, Integer> headerWithRelations) {
+        return new CsvFile(csvFileInfo, new ArrayList<>(), header, headerWithRelations);
     }
 
     public static CsvFile FromFile(CsvFileInfo csvFileInfo, char delimiter) throws IOException {
-        var header = new HashMap<String, Integer>();
+        var headerWithRelations = new HashMap<String, Integer>();
         var file = new File(csvFileInfo.getFilePath());
         var parser = new CSVParserBuilder().withSeparator(delimiter).build();
 
@@ -38,10 +39,10 @@ public class CsvFile {
             }
             String[] headerColumns = data.get(0);
             for (int i = 0; i < headerColumns.length; i++) {
-                header.put(headerColumns[i], i);
+                headerWithRelations.put(headerColumns[i], i);
             }
             data.remove(headerColumns);
-            return new CsvFile(csvFileInfo, data, header);
+            return new CsvFile(csvFileInfo, data,null, headerWithRelations); //TODO HEADER!!!!!!
         }
     }
 
@@ -78,6 +79,15 @@ public class CsvFile {
         return rows.add(row);
     }
 
+    public boolean addRow(Map<String, String> row) {
+        var stringRow = new String[header.size()];
+        for (Map.Entry<String, Integer> headerEntry : header.entrySet()) {
+            var cellValue =  row.get(headerEntry.getKey());
+            stringRow[headerEntry.getValue()] = cellValue != null ? cellValue : "\"\"";
+        }
+        return addRow(stringRow);
+    }
+
     public void writeFile(char delimiter) throws IOException {
         File file = new File(csvFileInfo.getFilePath());
         try (var br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
@@ -90,5 +100,19 @@ public class CsvFile {
                 br.newLine();
             }
         }
+    }
+
+    public InMemoryCsvFile toInMemoryFile(String delimiter) {
+        var data = new String[rows.size() + 1];
+        data[0] = headerWithRelations.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.joining(delimiter));
+        int index = 1;
+        for (String[] row : rows) {
+            data[index++] = String.join(delimiter, row);
+        }
+        return new InMemoryCsvFile(csvFileInfo.getName(), data);
     }
 }

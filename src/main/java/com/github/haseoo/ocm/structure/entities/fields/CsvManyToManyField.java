@@ -32,7 +32,9 @@ public final class CsvManyToManyField implements CsvField {
     }
 
     @Override
-    public String toCsvStringValue(Object value) throws CsvMappingException {
+    @SuppressWarnings("unchecked")
+    public String toCsvStringValue(Object entityObject) throws CsvMappingException {
+        var value = ReflectionUtils.getFieldValue(entityObject, getFieldName());
         var valueAsList = (Collection<Object>) value;
         var stringIds = new ArrayList<String>();
         for (Object obj : valueAsList) {

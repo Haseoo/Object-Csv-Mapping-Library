@@ -4,6 +4,7 @@ import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
+import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
@@ -27,8 +28,9 @@ public final class CsvValueField implements CsvField {
     }
 
     @Override
-    public String toCsvStringValue(Object value) throws CsvMappingException {
-        return converterContext.convertToString(fieldType, value, formatter);
+    public String toCsvStringValue(Object entityObject) throws CsvMappingException {
+        var value = ReflectionUtils.getFieldValue(entityObject, fieldName);
+        return value != null ? converterContext.convertToString(fieldType, value, formatter) : "";
     }
 
     @Override

@@ -1,10 +1,12 @@
 package com.github.haseoo.ocm.internal.utils;
 
 import com.github.haseoo.ocm.api.annotation.CsvTransient;
+import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -53,5 +55,13 @@ public class ReflectionUtils {
     public static Class<?> getActualTypeArgument(Field genericField) {
         return (Class<?>) ((ParameterizedType) genericField.getGenericType())
                 .getActualTypeArguments()[0];
+    }
+
+    public static Object getFieldValue(Object object, String fieldName) throws CsvMappingException {
+        try {
+            return object.getClass().getMethod(getGetterName(fieldName)).invoke(object);
+        } catch (NullPointerException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new CsvMappingException("Getter accessor not present or invalid", e);
+        }
     }
 }

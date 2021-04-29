@@ -10,16 +10,22 @@ import com.github.haseoo.ocm.internal.utils.ObjectToStringResolverContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.entities.fields.*;
+import com.github.haseoo.ocm.structure.files.CsvEntityFile;
+import com.github.haseoo.ocm.structure.files.CsvFile;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 
 public class CsvMapper {
-    private final MappingContext mappingContext = new MappingContext("basePath", "");
+    private final MappingContext mappingContext = new MappingContext("basePath", "|");
 
-    public <T> void ListToCsv(List<T> objects) throws CsvMappingException {
+    public <T> List<InMemoryCsvFile> listToCstInMemoryFile(List<T> objects) throws CsvMappingException {
         ObjectToStringResolverContext resolverContext = new ObjectToStringResolverContext();
         resolverContext.addObjectsToResolve(objects);
         while (resolverContext.objectsToResolve()) {
@@ -34,7 +40,18 @@ public class CsvMapper {
             }
             resolverContext.registerResolvedObject(objectType, object);
         }
-        resolverContext.DEBUG_accessRegisteredEntityClasses();
+        var csvFileInfos = resolverContext.resolveToFileInfo();
+        var csvFiles = new ArrayList<CsvFile>();
+        for (CsvEntityFile csvFileInfo : csvFileInfos) {
+            var headerWithRelations = csvFileInfo.getHeader(resolverContext::getClassFileName);
+            var headerWithoutRelations = csvFileInfo.getHeader();
+            var csvFile = CsvFile.FromObjects(csvFileInfo, headerWithoutRelations, headerWithRelations);
+            for (Map<String, String> row : csvFileInfo.getValues()) {
+                csvFile.addRow(row);
+            }
+            csvFiles.add(csvFile);
+        }
+        return csvFiles.stream().map(csvFile -> csvFile.toInMemoryFile(mappingContext.getSplitter())).collect(toList());
     }
 
     private CsvEntityClass getCsvEntityClass(Class<?> type,

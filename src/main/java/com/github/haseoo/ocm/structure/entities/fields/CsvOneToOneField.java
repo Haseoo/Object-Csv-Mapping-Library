@@ -26,8 +26,9 @@ public final class CsvOneToOneField implements CsvField {
     }
 
     @Override
-    public String toCsvStringValue(Object value) throws CsvMappingException {
-        return entityIdResolver.getObjectId(value, beginRelation.getType());
+    public String toCsvStringValue(Object entityObject) throws CsvMappingException {
+        var value = ReflectionUtils.getFieldValue(entityObject, getFieldName());
+        return value != null ? entityIdResolver.getObjectId(value, beginRelation.getType()) : "";
     }
 
     @Override

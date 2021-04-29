@@ -7,7 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
 public interface CsvField {
-    String toCsvStringValue(Object value) throws CsvMappingException;
+    String toCsvStringValue(Object entityObject) throws CsvMappingException;
 
     Object toObjectValue(String value) throws CsvMappingException;
 
