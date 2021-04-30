@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 @Data
 public class CsvEntityClass {
-    public CsvEntityClass(Class<?> type) throws ClassIsNotAnCsvEntity {
+    private CsvEntityClass(Class<?> type) throws ClassIsNotAnCsvEntity {
         this.type = type;
         subClasses = new ArrayList<>();
         fields = new ArrayList<>();
