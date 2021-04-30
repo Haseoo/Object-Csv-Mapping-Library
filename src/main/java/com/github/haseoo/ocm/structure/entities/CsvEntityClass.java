@@ -1,15 +1,17 @@
 package com.github.haseoo.ocm.structure.entities;
 
-import com.github.haseoo.ocm.api.annotation.CsvEntity;
-import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
-import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
-import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.structure.entities.fields.CsvField;
-import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
+import com.github.haseoo.ocm.api.annotation.*;
+import com.github.haseoo.ocm.api.exceptions.*;
+import com.github.haseoo.ocm.internal.MappingContext;
+import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
+import com.github.haseoo.ocm.structure.entities.fields.*;
+import com.github.haseoo.ocm.structure.resolvers.EntityClassResolver;
+import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Consumer;
@@ -159,5 +161,81 @@ public class CsvEntityClass {
                 ", fields=" + fields +
                 ", id=" + id +
                 '}';
+    }
+
+    public static CsvEntityClass getInstance(Class<?> type,
+                                             EntityClassResolver entityClassResolver,
+                                             EntityIdResolver entityIdResolver,
+                                             MappingContext mappingContext) throws CsvMappingException {
+        if (type == null || type.getAnnotation(CsvEntity.class) == null || type.equals(Object.class)) {
+            return null;
+        }
+        if (entityClassResolver.isClassEntityRegistered(type)) {
+            return entityClassResolver.getRegisteredEntityClass(type);
+        }
+        var csvEntityClass = new CsvEntityClass(type);
+
+        try {
+            fillEntityClass(csvEntityClass,
+                    entityIdResolver,
+                    mappingContext);
+        } catch (CsvMappingException e) {
+            throw new CsvMappingException("Invalid entity structure", e);
+        }
+
+        var baseType = type.getSuperclass();
+        var baseClassEntity = getInstance(baseType,
+                entityClassResolver,
+                entityIdResolver,
+                mappingContext);
+        if (baseClassEntity != null) {
+            csvEntityClass.setBaseClass(baseClassEntity);
+            baseClassEntity.getSubClasses().add(csvEntityClass);
+        }
+        entityClassResolver.registerEntityClass(csvEntityClass);
+        return csvEntityClass;
+
+    }
+
+    private static void fillEntityClass(CsvEntityClass entityClass,
+                                        EntityIdResolver resolverContext,
+                                        MappingContext mappingContext) throws CsvMappingException {
+        var type = entityClass.getType();
+        List<Field> objectFields = ReflectionUtils.getNonTransientFields(type.getDeclaredFields());
+        for (Field objectField : objectFields) {
+            entityClass.getFields().add(resolveField(type,
+                    objectField,
+                    resolverContext,
+                    mappingContext));
+            if (objectField.isAnnotationPresent(CsvId.class)) {
+                entityClass.setId(new CsvValueField(mappingContext.getConverterContext(), objectField));
+            }
+        }
+
+    }
+
+    private static CsvField resolveField(Class<?> entityType,
+                                         Field entityField,
+                                         EntityIdResolver resolverContext,
+                                         MappingContext mappingContext) throws
+            ClassIsNotAnCsvEntity,
+            FieldIsNotACollectionException,
+            RelationEndNotPresentException {
+        CsvField csvField;
+        if (entityField.isAnnotationPresent(CsvOneToOne.class)) {
+            csvField = CsvOneToOneField.newInstance(entityType, entityField, resolverContext);
+        } else if (entityField.isAnnotationPresent(CsvOneToMany.class)) {
+            csvField = CsvOneToManyField.newInstance(entityType, entityField, resolverContext);
+        } else if (entityField.isAnnotationPresent(CsvManyToOne.class)) {
+            csvField = CsvManyToOneField.newInstance(entityType, entityField);
+        } else if (entityField.isAnnotationPresent(CsvManyToMany.class)) {
+            csvField = CsvManyToManyField.newInstance(entityType,
+                    entityField,
+                    resolverContext,
+                    mappingContext.getSplitter());
+        } else {
+            csvField = new CsvValueField(mappingContext.getConverterContext(), entityField);
+        }
+        return csvField;
     }
 }

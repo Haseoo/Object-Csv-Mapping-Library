@@ -1,7 +1,8 @@
 package com.github.haseoo.ocm.structure.entities.fields;
 
-import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
-import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
+import com.github.haseoo.ocm.api.annotation.CsvManyToOne;
+import com.github.haseoo.ocm.api.annotation.CsvOneToMany;
+import com.github.haseoo.ocm.api.exceptions.*;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 
@@ -10,15 +11,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getRelationField;
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.validateRelationClass;
+
 public final class CsvOneToManyField implements CsvField {
     private final EntityIdResolver entityIdResolver;
     private final CsvRelation beginRelation;
     private final CsvRelation endRelation;
 
-    public CsvOneToManyField(EntityIdResolver entityIdResolver,
-                             Field beginRelationField,
-                             Field endRelationField,
-                             Class<?> endRelationType) {
+    private CsvOneToManyField(EntityIdResolver entityIdResolver,
+                              Field beginRelationField,
+                              Field endRelationField,
+                              Class<?> endRelationType) {
         this.entityIdResolver = entityIdResolver;
         this.beginRelation = new CsvRelation(beginRelationField);
         this.endRelation = new CsvRelation(endRelationType, endRelationField);
@@ -74,5 +78,34 @@ public final class CsvOneToManyField implements CsvField {
             }
             appendObject.accept(relationEndObject);
         }
+    }
+
+    public static CsvOneToManyField newInstance(Class<?> relationBeginEntityType,
+                                                Field relationBeginField,
+                                                EntityIdResolver resolverContext) throws
+            ClassIsNotAnCsvEntity,
+            RelationEndNotPresentException,
+            FieldIsNotACollectionException {
+        var fieldAnnotation = relationBeginField.getAnnotation(CsvOneToMany.class);
+        var relationEndEntityType = relationBeginField.getType();
+        validateRelationClass(relationEndEntityType);
+        Field endRelationField = getRelationField(relationEndEntityType,
+                fieldAnnotation.fieldName(),
+                fieldAnnotation.annotationType());
+        if (!ReflectionUtils.isClassCollection(endRelationField.getType())) {
+            throw new FieldIsNotACollectionException(relationEndEntityType,
+                    fieldAnnotation.fieldName());
+        }
+        var endRelationFieldCollectionType = ReflectionUtils.getActualTypeArgument(endRelationField);
+        if (!endRelationField.isAnnotationPresent(CsvManyToOne.class) ||
+                endRelationFieldCollectionType != relationBeginEntityType) {
+            throw new RelationEndNotPresentException(fieldAnnotation.annotationType(),
+                    relationEndEntityType,
+                    fieldAnnotation.fieldName());
+        }
+        return new CsvOneToManyField(resolverContext,
+                relationBeginField,
+                endRelationField,
+                endRelationFieldCollectionType);
     }
 }

@@ -1,8 +1,10 @@
 package com.github.haseoo.ocm.structure.entities.fields;
 
 import com.github.haseoo.ocm.api.annotation.CsvOneToOne;
+import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
 import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
+import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 
@@ -10,15 +12,18 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.function.Consumer;
 
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getRelationField;
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.validateRelationClass;
+
 public final class CsvOneToOneField implements CsvField {
     private final EntityIdResolver entityIdResolver;
     private final CsvRelation beginRelation;
     private final CsvRelation endRelation;
     private final boolean appendToFile;
 
-    public CsvOneToOneField(EntityIdResolver entityIdResolver,
-                            Field beginRelationField,
-                            Field endRelationField) {
+    private CsvOneToOneField(EntityIdResolver entityIdResolver,
+                             Field beginRelationField,
+                             Field endRelationField) {
         this.entityIdResolver = entityIdResolver;
         this.beginRelation = new CsvRelation(beginRelationField);
         this.endRelation = new CsvRelation(endRelationField);
@@ -75,5 +80,25 @@ public final class CsvOneToOneField implements CsvField {
             }
             appendObject.accept(relationEndObject);
         }
+    }
+
+    public static CsvOneToOneField newInstance(Class<?> relationBeginEntityType,
+                                               Field relationBeginField,
+                                               EntityIdResolver resolverContext)
+            throws ClassIsNotAnCsvEntity,
+            RelationEndNotPresentException {
+        var fieldAnnotation = relationBeginField.getAnnotation(CsvOneToOne.class);
+        var relationEndEntityType = relationBeginField.getType();
+        validateRelationClass(relationEndEntityType);
+        Field endRelationField = getRelationField(relationEndEntityType,
+                fieldAnnotation.fieldName(),
+                fieldAnnotation.annotationType());
+        if (!endRelationField.isAnnotationPresent(CsvOneToOne.class) ||
+                endRelationField.getType() != relationBeginEntityType) {
+            throw new RelationEndNotPresentException(fieldAnnotation.annotationType(),
+                    relationEndEntityType,
+                    fieldAnnotation.fieldName());
+        }
+        return new CsvOneToOneField(resolverContext, relationBeginField, endRelationField);
     }
 }

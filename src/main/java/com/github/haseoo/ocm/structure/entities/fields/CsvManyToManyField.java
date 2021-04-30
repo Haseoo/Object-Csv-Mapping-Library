@@ -1,8 +1,7 @@
 package com.github.haseoo.ocm.structure.entities.fields;
 
-import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
-import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.internal.MappingContext;
+import com.github.haseoo.ocm.api.annotation.CsvManyToMany;
+import com.github.haseoo.ocm.api.exceptions.*;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import org.apache.commons.lang3.NotImplementedException;
@@ -13,22 +12,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.*;
+
 public final class CsvManyToManyField implements CsvField {
     private final EntityIdResolver entityIdResolver;
     private final CsvRelation beginRelation;
     private final CsvRelation endRelation;
-    private final MappingContext mappingContext;
+    private final String delimiter;
 
-    public CsvManyToManyField(EntityIdResolver entityIdResolver,
-                              MappingContext mappingContext,
-                              Field beginRelationField,
-                              Class<?> beginRelationFieldType,
-                              Field endRelationField,
-                              Class<?> endRelationFieldType) {
+    private CsvManyToManyField(EntityIdResolver entityIdResolver,
+                               String delimiter,
+                               Field beginRelationField,
+                               Class<?> beginRelationFieldType,
+                               Field endRelationField,
+                               Class<?> endRelationFieldType) {
         this.entityIdResolver = entityIdResolver;
         this.beginRelation = new CsvRelation(beginRelationFieldType, beginRelationField);
         this.endRelation = new CsvRelation(endRelationFieldType, endRelationField);
-        this.mappingContext = mappingContext;
+        this.delimiter = delimiter;
     }
 
     @Override
@@ -40,7 +41,7 @@ public final class CsvManyToManyField implements CsvField {
         for (Object obj : valueAsList) {
             stringIds.add(entityIdResolver.getObjectId(obj, beginRelation.getType()));
         }
-        return "[" + String.join(mappingContext.getSplitter(), stringIds) + "]";
+        return "[" + String.join(delimiter, stringIds) + "]";
     }
 
     @Override
@@ -89,5 +90,33 @@ public final class CsvManyToManyField implements CsvField {
             }
             relationEndObjects.forEach(appendObject);
         }
+    }
+
+    public static CsvManyToManyField newInstance(Class<?> relationBeginEntityType,
+                                                 Field relationBeginField,
+                                                 EntityIdResolver resolverContext,
+                                                 String delimiter) throws
+            FieldIsNotACollectionException,
+            RelationEndNotPresentException, ClassIsNotAnCsvEntity {
+        var fieldAnnotation = relationBeginField.getAnnotation(CsvManyToMany.class);
+        validateCollectionRelation(relationBeginField.getType(), fieldAnnotation.fieldName());
+        var relationEndEntityType = ReflectionUtils.getActualTypeArgument(relationBeginField);
+        validateRelationClass(relationEndEntityType);
+        Field endRelationField = getRelationField(relationEndEntityType,
+                fieldAnnotation.fieldName(),
+                fieldAnnotation.annotationType());
+        var endRelationFieldCollectionType = ReflectionUtils.getActualTypeArgument(endRelationField);
+        if (!endRelationField.isAnnotationPresent(CsvManyToMany.class) ||
+                endRelationFieldCollectionType != relationBeginEntityType) {
+            throw new RelationEndNotPresentException(fieldAnnotation.annotationType(),
+                    relationEndEntityType,
+                    fieldAnnotation.fieldName());
+        }
+        return new CsvManyToManyField(resolverContext,
+                delimiter,
+                relationBeginField,
+                relationEndEntityType,
+                endRelationField,
+                relationBeginEntityType);
     }
 }

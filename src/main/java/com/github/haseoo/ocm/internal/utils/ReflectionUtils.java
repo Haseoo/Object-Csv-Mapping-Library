@@ -1,7 +1,11 @@
 package com.github.haseoo.ocm.internal.utils;
 
+import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvTransient;
+import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
+import com.github.haseoo.ocm.api.exceptions.FieldIsNotACollectionException;
+import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
 import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
@@ -62,6 +66,31 @@ public class ReflectionUtils {
             return object.getClass().getMethod(getGetterName(fieldName)).invoke(object);
         } catch (NullPointerException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new CsvMappingException("Getter accessor not present or invalid", e);
+        }
+    }
+
+    public static void validateRelationClass(Class<?> relationEndEntityType) throws ClassIsNotAnCsvEntity {
+        if (!relationEndEntityType.isAnnotationPresent(CsvEntity.class)) {
+            throw new ClassIsNotAnCsvEntity(relationEndEntityType);
+        }
+    }
+
+    public static Field getRelationField(Class<?> relationEndEntityType,
+                                         String fieldName,
+                                         Class<? extends Annotation> annotationType) throws RelationEndNotPresentException {
+        Field endRelationField;
+        try {
+            endRelationField = relationEndEntityType.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            throw new RelationEndNotPresentException(annotationType, relationEndEntityType, fieldName);
+        }
+        return endRelationField;
+    }
+
+    public static void validateCollectionRelation(Class<?> relationBeginEntityType, String fieldName) throws FieldIsNotACollectionException {
+        if (!ReflectionUtils.isClassCollection(relationBeginEntityType)) {
+            throw new FieldIsNotACollectionException(relationBeginEntityType,
+                    fieldName);
         }
     }
 }

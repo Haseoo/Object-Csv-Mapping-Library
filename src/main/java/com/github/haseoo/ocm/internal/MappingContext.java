@@ -4,8 +4,6 @@ import com.github.haseoo.ocm.api.converter.TypeConverter;
 import lombok.Getter;
 
 public class MappingContext {
-
-
     @Getter
     private final ConverterContext converterContext;
 

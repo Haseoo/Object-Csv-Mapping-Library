@@ -10,7 +10,7 @@ import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
-public class ObjectToStringResolverContext implements EntityIdResolver {
+public class ObjectToStringResolverContext implements EntityIdResolver, EntityClassResolver {
     private final Map<Class<?>, CsvEntityClass> registeredEntityClasses = new HashMap<>();
     private final Map<Class<?>, List<Object>> resolvedObjects = new HashMap<>();
     private final LinkedList<Object> objectsToResolve = new LinkedList<>();
