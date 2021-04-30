@@ -13,6 +13,6 @@ public class DateTimeConverter implements TypeConverter<LocalDateTime> {
 
     @Override
     public String convertToString(LocalDateTime value, String formatter) {
-        return String.format("\"%s\"", value.format(DateTimeFormatter.ofPattern(formatter)));
+        return value.format(DateTimeFormatter.ofPattern(formatter));
     }
 }

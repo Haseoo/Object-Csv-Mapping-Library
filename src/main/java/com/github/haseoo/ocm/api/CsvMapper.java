@@ -1,5 +1,6 @@
 package com.github.haseoo.ocm.api;
 
+import com.github.haseoo.ocm.api.converter.TypeConverter;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.MappingContext;
 import com.github.haseoo.ocm.structure.files.CsvFile;
@@ -16,6 +17,11 @@ public class CsvMapper {
 
     public CsvMapper(String basePath, String delimiter) {
         mappingContext = new MappingContext(basePath, delimiter);
+
+    }
+
+    public <T> void registerConverter(Class<T> clazz, TypeConverter<T> converter) {
+        mappingContext.registerConverter(clazz, converter);
     }
 
     public <T> List<InMemoryCsvFile> listToCsvInMemoryFile(List<T> objects) throws CsvMappingException {
