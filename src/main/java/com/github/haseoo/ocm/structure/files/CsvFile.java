@@ -91,14 +91,14 @@ public class CsvFile {
         return addRow(stringRow);
     }
 
-    public void writeFile(char delimiter) throws IOException {
+    public void writeFile(String delimiter) throws IOException {
         File file = new File(csvFileInfo.getFilePath());
         try (var br = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            var rowHeader = header.keySet().stream().collect(Collectors.joining(Character.toString(delimiter)));
+            var rowHeader = getHeaderRow(delimiter);
             br.write(rowHeader);
             br.newLine();
             for (String[] row : rows) {
-                var rowString = String.join(Character.toString(delimiter), row);
+                var rowString = String.join(delimiter, row);
                 br.write(rowString);
                 br.newLine();
             }
@@ -107,15 +107,19 @@ public class CsvFile {
 
     public InMemoryCsvFile toInMemoryFile(String delimiter) {
         var data = new String[rows.size() + 1];
-        data[0] = headerWithRelations.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.joining(delimiter));
+        data[0] = getHeaderRow(delimiter);
         int index = 1;
         for (String[] row : rows) {
             data[index++] = String.join(delimiter, row);
         }
         return new InMemoryCsvFile(csvFileInfo.getName(), data);
+    }
+
+    private String getHeaderRow(String delimiter) {
+        return headerWithRelations.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.joining(delimiter));
     }
 }

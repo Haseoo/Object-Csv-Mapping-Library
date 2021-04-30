@@ -13,11 +13,12 @@ import java.util.function.Function;
 @Value
 public class CsvEntityFile implements CsvFileInfo {
     CsvEntityClass baseClass;
+    String basePath;
     Map<CsvEntityClass, List<Object>> objects;
 
     @Override
     public String getFilePath() {
-        return null;
+        return String.format("%s/%s", basePath, getName());
     }
 
     @Override

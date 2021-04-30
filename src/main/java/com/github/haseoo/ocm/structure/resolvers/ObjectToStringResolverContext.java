@@ -36,10 +36,6 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
         resolvedObjects.get(type).add(object);
     }
 
-    public boolean containsClassOfResolvedObjects(Class<?> type) {
-        return resolvedObjects.containsKey(type);
-    }
-
     public boolean isObjectAlreadyResolved(Class<?> type, Object obj) {
         var typeObject = resolvedObjects.get(type);
         if (typeObject == null) {
@@ -80,7 +76,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
         return idField.toCsvStringValue(object);
     }
 
-    public List<CsvEntityFile> resolveToFileInfo() {
+    public List<CsvEntityFile> resolveToFileInfo(String basePath) {
         var csvFileInfos = new ArrayList<CsvEntityFile>();
         var baseEntityClasses = registeredEntityClasses
                 .values()
@@ -97,7 +93,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
                     objects.put(entityClass, entityObjects);
                 }
             }
-            var csvFileInfo = new CsvEntityFile(baseEntityClass, objects);
+            var csvFileInfo = new CsvEntityFile(baseEntityClass, basePath, objects);
             csvFileInfos.add(csvFileInfo);
             entityClasses.forEach(entityClass -> csvClassFileAssociation.put(entityClass.getType(), csvFileInfo));
         }
@@ -108,7 +104,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver {
         if (!csvClassFileAssociation.containsKey(type)) {
             return Optional.empty();
         }
-        return Optional.ofNullable(csvClassFileAssociation.get(type).getName());
+        return Optional.of(csvClassFileAssociation.get(type).getName());
     }
 
     private List<CsvEntityClass> getEntityAllSubEntities(CsvEntityClass csvEntityClass) {
