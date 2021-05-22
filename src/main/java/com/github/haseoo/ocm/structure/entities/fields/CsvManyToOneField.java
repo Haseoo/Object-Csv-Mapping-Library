@@ -11,6 +11,7 @@ import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.*;
@@ -32,7 +33,7 @@ public final class CsvManyToOneField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(String value) {
+    public Object toObjectValue(Map<String, String> fields) {
         throw new AssertionError("This relation is resolved by one-to-many side!");
     }
 

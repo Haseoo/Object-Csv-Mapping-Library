@@ -4,12 +4,13 @@ import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public interface CsvField {
     String toCsvStringValue(Object entityObject) throws CsvMappingException;
 
-    Object toObjectValue(String value) throws CsvMappingException;
+    Object toObjectValue(Map<String, String> fields) throws CsvMappingException;
 
     String getFieldName();
 

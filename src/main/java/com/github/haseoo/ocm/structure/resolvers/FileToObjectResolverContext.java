@@ -21,6 +21,19 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
         return classesToResolve.pop();
     }
 
+    public void registerObject(Class<?> type, Map<String, String> fieldValues) throws CsvMappingException {
+        var stringObj = CsvStringObject.getInstance(getRegisteredEntityClass(type), fieldValues);
+        if (!csvObjects.containsKey(type)) {
+            csvObjects.put(type, new HashMap<>());
+        }
+        csvObjects.get(type).put(resolveObjectId(stringObj.getEntityClass(), fieldValues),
+                stringObj);
+    }
+
+    private Object resolveObjectId(CsvEntityClass entityClass, Map<String, String> fieldValues) {
+        return entityClass.getId().map(field -> field.toObjectValue(fieldValues)).orElse(null);
+    }
+
     @Override
     public boolean isClassEntityRegistered(Class<?> type) {
         return resolvedClasses.containsKey(type);

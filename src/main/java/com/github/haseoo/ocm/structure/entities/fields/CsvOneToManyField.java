@@ -9,6 +9,7 @@ import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getRelationField;
@@ -35,8 +36,8 @@ public final class CsvOneToManyField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(String value) throws CsvMappingException {
-        return entityIdResolver.getObjectById(value, beginRelation.getType());
+    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
+        return entityIdResolver.getObjectById(fields.get(getColumnName()), beginRelation.getType());
     }
 
     @Override

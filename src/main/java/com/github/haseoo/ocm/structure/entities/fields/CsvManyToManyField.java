@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.*;
@@ -45,7 +46,7 @@ public final class CsvManyToManyField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(String value) throws CsvMappingException {
+    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
         throw new NotImplementedException("TODO"); //TODO
     }
 
