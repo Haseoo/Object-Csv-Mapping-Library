@@ -15,10 +15,10 @@ import java.util.Map;
 public class CsvStringObject {
     Object object;
     CsvEntityClass entityClass;
-    Map<String, String> csvFields;
+    Map<String, String> csvRow;
 
     public static CsvStringObject getInstance(CsvEntityClass entityClass,
-                                              Map<String, String> csvFields)
+                                              Map<String, String> csvRow)
             throws CsvMappingException {
         Object object = null;
         try {
@@ -31,6 +31,6 @@ public class CsvStringObject {
                     entityClass.getType()),
                     e);
         }
-        return new CsvStringObject(object, entityClass, csvFields);
+        return new CsvStringObject(object, entityClass, csvRow);
     }
 }

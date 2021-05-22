@@ -16,6 +16,10 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
     private final Map<Class<?>, Map<Object, CsvStringObject>> csvObjects = new HashMap<>();
     private final LinkedList<Class<?>> classesToResolve = new LinkedList<>();
 
+    public boolean classesToResolve() {
+        return !classesToResolve.isEmpty();
+    }
+
     public void addClassToResolve(Class<?> clazz) {
         classesToResolve.add(clazz);
     }

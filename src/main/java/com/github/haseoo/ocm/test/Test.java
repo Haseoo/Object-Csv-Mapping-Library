@@ -4,11 +4,12 @@ import com.github.haseoo.ocm.api.CsvMapper;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.test.data.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Arrays;
 
 public class Test {
-    public static void main(String[] args) throws CsvMappingException {
+    public static void main(String[] args) throws CsvMappingException, IOException {
         var boss = new Worker();
         boss.setId(0);
         boss.setName("Tomasz");
@@ -107,6 +108,7 @@ public class Test {
 
         var mapper = new CsvMapper("", ";");
         mapper.registerConverter(Chip.class, new ChipConverter());
+       // mapper.listToFiles(Arrays.asList(issue1, issue2, issue3, susIssue));
         System.out.println(mapper.listToCsvInMemoryFile(Arrays.asList(issue1, issue2, issue3, susIssue)));
     }
 }

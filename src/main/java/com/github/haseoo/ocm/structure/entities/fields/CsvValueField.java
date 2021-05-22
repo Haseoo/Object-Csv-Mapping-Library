@@ -2,6 +2,7 @@ package com.github.haseoo.ocm.structure.entities.fields;
 
 import com.github.haseoo.ocm.api.annotation.CsvColumn;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;
+import com.github.haseoo.ocm.api.exceptions.ColumnNotFoundException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
@@ -35,8 +36,11 @@ public final class CsvValueField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
-        return converterContext.convertToObject(fieldType, fields.get(getColumnName()), formatter);
+    public Object toObjectValue(Map<String, String> row) throws CsvMappingException {
+        if (!row.containsKey(getColumnName())) {
+            throw new ColumnNotFoundException(getColumnName());
+        }
+        return converterContext.convertToObject(fieldType, row.get(getColumnName()), formatter);
     }
 
     @Override

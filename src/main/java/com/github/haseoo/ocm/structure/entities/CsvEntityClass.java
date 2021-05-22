@@ -57,7 +57,7 @@ public class CsvEntityClass {
     }
 
     public Map<String, Integer> getCsvHeaderWithRelations(Function<Class<?>, Optional<String>> fileNameResolver) {
-        return getCstHeader((field) -> getColumnName(field, fileNameResolver));
+        return getCstHeader(field -> getColumnName(field, fileNameResolver));
     }
 
     public Map<String, Integer> getCsvHeaderWithoutRelations() {
@@ -88,7 +88,7 @@ public class CsvEntityClass {
 
     public Map<String, String> resolveObject(Object entityObject) throws CsvMappingException {
         var valuesMap = new HashMap<String, String>();
-        valuesMap.put("TYPE", String.format("\"%s\"", entityObject.getClass().getCanonicalName()));
+        valuesMap.put(CsvEntityClass.TYPE_HEADER_NAME, String.format("\"%s\"", entityObject.getClass().getCanonicalName()));
         for (CsvField csvField : getFieldsWithInheritance()) {
             if (csvField.appendToFile()) {
                 valuesMap.put(csvField.getColumnName(),
@@ -132,7 +132,7 @@ public class CsvEntityClass {
             }
         }
         if (!subClasses.isEmpty()) {
-            header.put("TYPE", index);
+            header.put(CsvEntityClass.TYPE_HEADER_NAME, index);
         }
         return header;
     }
@@ -246,4 +246,6 @@ public class CsvEntityClass {
         }
         return csvField;
     }
+
+    public static final String TYPE_HEADER_NAME = "@ENTITY_TYPE";
 }
