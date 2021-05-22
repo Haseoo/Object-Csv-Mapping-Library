@@ -4,8 +4,11 @@ import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.IdFiledNotFound;
 import com.github.haseoo.ocm.structure.CsvStringObject;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
+import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
+import lombok.SneakyThrows;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class FileToObjectResolverContext implements  EntityIdResolver, EntityClassResolver {
 
@@ -31,7 +34,13 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
     }
 
     private Object resolveObjectId(CsvEntityClass entityClass, Map<String, String> fieldValues) {
-        return entityClass.getId().map(field -> field.toObjectValue(fieldValues)).orElse(null);
+        return entityClass.getId().map(new Function<>() {
+            @Override
+            @SneakyThrows
+            public Object apply(CsvValueField field) {
+                return field.toObjectValue(fieldValues);
+            }
+        }).orElse(null);
     }
 
     @Override

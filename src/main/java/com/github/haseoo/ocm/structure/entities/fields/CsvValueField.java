@@ -5,7 +5,6 @@ import com.github.haseoo.ocm.api.annotation.CsvFormatter;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.ConverterContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
-import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -35,8 +34,8 @@ public final class CsvValueField implements CsvField {
         return value != null ? converterContext.convertToString(fieldType, value, formatter) : "";
     }
 
-    @SneakyThrows
-    public Object toObjectValue(Map<String, String> fields) {
+    @Override
+    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
         return converterContext.convertToObject(fieldType, fields.get(getColumnName()), formatter);
     }
 
