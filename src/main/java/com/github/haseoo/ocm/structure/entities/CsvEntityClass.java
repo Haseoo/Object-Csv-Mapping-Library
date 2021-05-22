@@ -78,6 +78,14 @@ public class CsvEntityClass {
         }
     }
 
+    public void addRelatedFieldsToContext(Consumer<Class<?>> appendClass) {
+        for (CsvField csvField : getFieldsWithInheritance()) {
+            if(csvField.getFieldType().isAnnotationPresent(CsvEntity.class)) {
+                appendClass.accept(csvField.getFieldType());
+            }
+        }
+    }
+
     public Map<String, String> resolveObject(Object entityObject) throws CsvMappingException {
         var valuesMap = new HashMap<String, String>();
         valuesMap.put("TYPE", String.format("\"%s\"", entityObject.getClass().getCanonicalName()));
