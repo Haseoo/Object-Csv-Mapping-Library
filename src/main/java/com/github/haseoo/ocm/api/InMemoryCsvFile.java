@@ -1,10 +1,11 @@
 package com.github.haseoo.ocm.api;
 
+import com.github.haseoo.ocm.structure.files.CsvFileInfo;
 import lombok.Value;
 
 
 @Value
-public class InMemoryCsvFile {
+public class InMemoryCsvFile implements CsvFileInfo {
     String fileName;
     String[] data;
 
@@ -19,5 +20,15 @@ public class InMemoryCsvFile {
             builder.append('\n');
         }
         return builder.toString();
+    }
+
+    @Override
+    public String getFilePath() {
+        return fileName;
+    }
+
+    @Override
+    public String getName() {
+        return fileName;
     }
 }

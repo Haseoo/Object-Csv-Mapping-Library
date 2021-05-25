@@ -7,8 +7,10 @@ import com.opencsv.CSVReaderBuilder;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -38,16 +40,23 @@ public class CsvFile {
             if (data.isEmpty()) {
                 throw new IOException(String.format("File %s has no content", csvFileInfo.getName()));
             }
-            String[] headerColumns = data.get(0);
-            for (int i = 0; i < headerColumns.length; i++) {
-                headerWithRelations.put(headerColumns[i], i);
-            }
-            data.remove(headerColumns);
-            var headerWithoutRelations = new HashMap<String, Integer>();
-            for (Map.Entry<String, Integer> entry : headerWithRelations.entrySet()) {
-                headerWithoutRelations.put(cutHeaderRelation(entry.getKey()), entry.getValue());
-            }
+            HashMap<String, Integer> headerWithoutRelations = prepareHeader(headerWithRelations, data);
             return new CsvFile(csvFileInfo, data, headerWithoutRelations, headerWithRelations);
+        }
+    }
+
+    public static CsvFile forInMemoryFile(InMemoryCsvFile inMemoryCsvFile, char delimiter) throws IOException {
+        var headerWithRelations = new HashMap<String, Integer>();
+        var parser = new CSVParserBuilder().withSeparator(delimiter).build();
+        var payload = String.join("\n", inMemoryCsvFile.getData());
+        try (var csvReader = new CSVReaderBuilder(new BufferedReader(new StringReader(payload)))
+                .withCSVParser(parser).build()) {
+            List<String[]> data = csvReader.readAll();
+            if (data.isEmpty()) {
+                throw new IOException(String.format("File %s has no content", inMemoryCsvFile.getFileName()));
+            }
+            HashMap<String, Integer> headerWithoutRelations = prepareHeader(headerWithRelations, data);
+            return new CsvFile(inMemoryCsvFile, data, headerWithoutRelations, headerWithRelations);
         }
     }
 
@@ -132,6 +141,19 @@ public class CsvFile {
     private static String cutHeaderRelation(String header) {
         var splitHeader = header.split("@");
         return splitHeader[0];
+    }
+
+    private static HashMap<String, Integer> prepareHeader(HashMap<String, Integer> headerWithRelations, List<String[]> data) {
+        String[] headerColumns = data.get(0);
+        for (int i = 0; i < headerColumns.length; i++) {
+            headerWithRelations.put(headerColumns[i], i);
+        }
+        data.remove(headerColumns);
+        var headerWithoutRelations = new HashMap<String, Integer>();
+        for (Map.Entry<String, Integer> entry : headerWithRelations.entrySet()) {
+            headerWithoutRelations.put(cutHeaderRelation(entry.getKey()), entry.getValue());
+        }
+        return headerWithoutRelations;
     }
 
     @Override
