@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-public final class FileToObjectResolver<T>  {
+public final class FileToObjectResolver<T> {
     private final MappingContext mappingContext;
     private final FileToObjectResolverContext context;
     private final CsvFilesManager csvFileManager;
@@ -33,7 +33,7 @@ public final class FileToObjectResolver<T>  {
 
     public List<T> resolve() throws CsvMappingException, IOException {
         var files = new HashSet<CsvFile>();
-        while(context.classesToResolve()) {
+        while (context.classesToResolve()) {
             var clazz = context.getClassToResolve();
             if (context.isClassEntityRegistered(clazz)) {
                 continue;

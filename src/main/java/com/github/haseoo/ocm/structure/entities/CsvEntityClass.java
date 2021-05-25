@@ -80,7 +80,7 @@ public class CsvEntityClass {
 
     public void addRelatedFieldsToContext(Consumer<Class<?>> appendClass) {
         for (CsvField csvField : getFieldsWithInheritance()) {
-            if(csvField.getFieldType().isAnnotationPresent(CsvEntity.class)) {
+            if (csvField.getFieldType().isAnnotationPresent(CsvEntity.class)) {
                 appendClass.accept(csvField.getFieldType());
             }
         }

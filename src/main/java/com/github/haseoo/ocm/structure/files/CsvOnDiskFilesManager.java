@@ -10,6 +10,7 @@ import java.io.IOException;
 public class CsvOnDiskFilesManager implements CsvFilesManager {
     private final String basePath;
     private final String delimiter;
+
     @Override
     public CsvFile getFileForEntity(CsvEntityClass entityClass) throws IOException {
         var file = new File(String.format("%s/%s.csv", basePath, entityClass.getName()));

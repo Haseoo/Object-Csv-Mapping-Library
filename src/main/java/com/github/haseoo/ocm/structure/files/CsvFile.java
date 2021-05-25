@@ -1,7 +1,6 @@
 package com.github.haseoo.ocm.structure.files;
 
 import com.github.haseoo.ocm.api.InMemoryCsvFile;
-import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;

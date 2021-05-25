@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class FileToObjectResolverContext implements  EntityIdResolver, EntityClassResolver {
+public class FileToObjectResolverContext implements EntityIdResolver, EntityClassResolver {
 
     private final Map<Class<?>, CsvEntityClass> resolvedClasses = new HashMap<>();
     private final Map<Class<?>, Map<Object, CsvStringObject>> csvObjects = new HashMap<>();

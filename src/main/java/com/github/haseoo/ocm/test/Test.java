@@ -108,7 +108,7 @@ public class Test {
 
         var mapper = new CsvMapper("", ";");
         mapper.registerConverter(Chip.class, new ChipConverter());
-       // mapper.listToFiles(Arrays.asList(issue1, issue2, issue3, susIssue));
+        // mapper.listToFiles(Arrays.asList(issue1, issue2, issue3, susIssue));
         System.out.println(mapper.listToCsvInMemoryFile(Arrays.asList(issue1, issue2, issue3, susIssue)));
     }
 }

@@ -2,11 +2,10 @@ package com.github.haseoo.ocm.test;
 
 import com.github.haseoo.ocm.api.CsvMapper;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.test.data.*;
+import com.github.haseoo.ocm.test.data.Chip;
+import com.github.haseoo.ocm.test.data.Worker;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Arrays;
 
 public class Test2 {
     public static void main(String[] args) throws CsvMappingException, IOException {

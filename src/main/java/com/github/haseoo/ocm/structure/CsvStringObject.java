@@ -1,7 +1,6 @@
 package com.github.haseoo.ocm.structure;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.api.exceptions.IdFiledNotFound;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

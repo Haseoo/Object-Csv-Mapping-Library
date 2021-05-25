@@ -6,7 +6,6 @@ import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.FieldIsNotACollectionException;
 import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
-import javassist.ClassPath;
 import lombok.experimental.UtilityClass;
 
 import java.lang.annotation.Annotation;
