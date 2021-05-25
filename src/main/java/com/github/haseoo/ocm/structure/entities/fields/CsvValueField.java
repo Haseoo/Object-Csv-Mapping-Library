@@ -43,6 +43,10 @@ public final class CsvValueField implements CsvField {
         return converterContext.convertToObject(fieldType, row.get(getColumnName()), formatter);
     }
 
+    public Object toObjectValue(String value) throws CsvMappingException {
+        return converterContext.convertToObject(fieldType, value, formatter);
+    }
+
     @Override
     public String getFieldName() {
         return fieldName;

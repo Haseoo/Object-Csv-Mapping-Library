@@ -76,6 +76,18 @@ public class ReflectionUtils {
         }
     }
 
+    public static void setObjectFiled(Object obj,
+                                      Object value,
+                                      String fieldName,
+                                      Class<?> fieldType) throws CsvMappingException {
+        var getterName = String.format("get%s", fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
+        try {
+            obj.getClass().getMethod(getterName, fieldType).invoke(obj, value);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new CsvMappingException("Invalid or not present getter method", e);
+        }
+    }
+
     public static Field getRelationField(Class<?> relationEndEntityType,
                                          String fieldName,
                                          Class<? extends Annotation> annotationType) throws RelationEndNotPresentException {

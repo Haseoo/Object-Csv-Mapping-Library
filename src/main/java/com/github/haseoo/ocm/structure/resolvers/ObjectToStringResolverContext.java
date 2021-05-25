@@ -62,7 +62,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver, EntityCl
 
 
     @Override
-    public Object getObjectById(Object id, Class<?> type) throws CsvMappingException {
+    public Object getObjectById(String id, Class<?> type) throws CsvMappingException {
         throw new NotImplementedException("TODO!");
     }
 

@@ -64,12 +64,14 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
     }
 
     @Override
-    public Object getObjectById(Object id, Class<?> type) throws CsvMappingException {
+    public Object getObjectById(String stringId, Class<?> type) throws CsvMappingException {
         if (!resolvedClasses.containsKey(type)) {
             throw new CsvMappingException(String.format("Entity of class %s not registered", type.getCanonicalName()));
         }
-        return getObjectByIdInClassTree(id, resolvedClasses.get(type))
-                .orElseThrow(() -> new CsvMappingException(String.format("Object with id %s not found", id)));
+        var entityClass = resolvedClasses.get(type);
+        var objId = entityClass.getId().orElseThrow(() -> new IdFiledNotFound(type)).toObjectValue(stringId);
+        return getObjectByIdInClassTree(objId, entityClass)
+                .orElseThrow(() -> new CsvMappingException(String.format("Object with id %s not found", objId)));
     }
 
     public Optional<Object> getObjectByIdInClassTree(Object id, CsvEntityClass root) {
@@ -97,7 +99,7 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
         return idField.toCsvStringValue(object);
     }
 
-    public List<?> getObjectOfClass(Class<?> clazz) {
+    public List<Object> getObjectOfClass(Class<?> clazz) {
         return csvObjects.get(clazz).values().stream().map(CsvStringObject::getObject).collect(Collectors.toList());
     }
 }
