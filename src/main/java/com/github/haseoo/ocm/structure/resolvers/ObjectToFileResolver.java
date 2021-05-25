@@ -46,7 +46,7 @@ public final class ObjectToFileResolver<T> {
     private CsvFile prepareCsvFile(CsvEntityFile csvFileInfo) throws CsvMappingException {
         var headerWithRelations = csvFileInfo.getHeader(resolverContext::getClassFileName);
         var headerWithoutRelations = csvFileInfo.getHeader();
-        var csvFile = CsvFile.fromObjects(csvFileInfo, headerWithoutRelations, headerWithRelations);
+        var csvFile = CsvFile.forObjects(csvFileInfo, headerWithoutRelations, headerWithRelations);
         for (Map<String, String> row : csvFileInfo.getValues()) {
             csvFile.addRow(row);
         }

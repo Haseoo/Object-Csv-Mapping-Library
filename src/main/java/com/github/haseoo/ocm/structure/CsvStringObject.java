@@ -20,7 +20,7 @@ public class CsvStringObject {
     public static CsvStringObject getInstance(CsvEntityClass entityClass,
                                               Map<String, String> csvRow)
             throws CsvMappingException {
-        Object object = null;
+        Object object;
         try {
             object = entityClass.getType().getConstructor().newInstance();
         } catch (InstantiationException |

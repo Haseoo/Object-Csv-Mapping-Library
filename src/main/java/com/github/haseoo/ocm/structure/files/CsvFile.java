@@ -1,6 +1,8 @@
 package com.github.haseoo.ocm.structure.files;
 
 import com.github.haseoo.ocm.api.InMemoryCsvFile;
+import com.github.haseoo.ocm.api.annotation.CsvEntity;
+import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReaderBuilder;
 import lombok.AccessLevel;
@@ -10,10 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -23,13 +22,13 @@ public class CsvFile {
     private final Map<String, Integer> header;
     private final Map<String, Integer> headerWithRelations;
 
-    public static CsvFile fromObjects(CsvFileInfo csvFileInfo,
-                                      Map<String, Integer> header,
-                                      Map<String, Integer> headerWithRelations) {
+    public static CsvFile forObjects(CsvFileInfo csvFileInfo,
+                                     Map<String, Integer> header,
+                                     Map<String, Integer> headerWithRelations) {
         return new CsvFile(csvFileInfo, new ArrayList<>(), header, headerWithRelations);
     }
 
-    public static CsvFile fromFile(CsvFileInfo csvFileInfo, char delimiter) throws IOException {
+    public static CsvFile forFile(CsvFileInfo csvFileInfo, char delimiter) throws IOException {
         var headerWithRelations = new HashMap<String, Integer>();
         var file = new File(csvFileInfo.getFilePath());
         var parser = new CSVParserBuilder().withSeparator(delimiter).build();
@@ -38,14 +37,18 @@ public class CsvFile {
                 .withCSVParser(parser).build()) {
             List<String[]> data = csvReader.readAll();
             if (data.isEmpty()) {
-                throw new AssertionError("Header not found"); //TODO
+                throw new IOException(String.format("File %s has no content", csvFileInfo.getName()));
             }
             String[] headerColumns = data.get(0);
             for (int i = 0; i < headerColumns.length; i++) {
                 headerWithRelations.put(headerColumns[i], i);
             }
             data.remove(headerColumns);
-            return new CsvFile(csvFileInfo, data, null, headerWithRelations); //TODO HEADER!!!!!!
+            var headerWithoutRelations = new HashMap<String, Integer>();
+            for (Map.Entry<String, Integer> entry : headerWithRelations.entrySet()) {
+                headerWithoutRelations.put(cutHeaderRelation(entry.getKey()), entry.getValue());
+            }
+            return new CsvFile(csvFileInfo, data, headerWithoutRelations, headerWithRelations);
         }
     }
 
@@ -53,14 +56,7 @@ public class CsvFile {
         return csvFileInfo.getName();
     }
 
-    public String getCell(int rowNum, String colName) {
-        if (!header.containsKey(colName)) {
-            throw new AssertionError(String.format("File %s does not contain %s column", getFileName(), colName)); //TODO
-        }
-        return getRow(rowNum)[header.get(colName)];
-    }
-
-    public String[] getRow(int rowNum) {
+    public Map<String, String> getRow(int rowNum) {
         if (rowNum >= rows.size()) {
             throw new IndexOutOfBoundsException(
                     String.format("Row number %s is greater than size of %s file, which is %s",
@@ -68,7 +64,13 @@ public class CsvFile {
                             getFileName(),
                             getRowCount()));
         }
-        return rows.get(rowNum);
+        var rowArray = rows.get(rowNum);
+        var rowMap = new HashMap<String, String>();
+        for (Map.Entry<String, Integer> headerEntry : header.entrySet()) {
+            var rowValue = rowArray[headerEntry.getValue()];
+            rowMap.put(headerEntry.getKey(), rowValue);
+        }
+        return rowMap;
     }
 
     public int getRowCount() {
@@ -115,11 +117,36 @@ public class CsvFile {
         return new InMemoryCsvFile(csvFileInfo.getName(), data);
     }
 
+    public boolean hasTypeHeader() {
+        return header.containsKey(CsvEntityClass.TYPE_HEADER_NAME);
+    }
+
     private String getHeaderRow(String delimiter) {
         return headerWithRelations.entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.joining(delimiter));
+    }
+
+
+    private static String cutHeaderRelation(String header) {
+        var splitHeader = header.split("@");
+        return splitHeader[0];
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CsvFile csvFile = (CsvFile) o;
+
+        return Objects.equals(csvFileInfo, csvFile.csvFileInfo);
+    }
+
+    @Override
+    public int hashCode() {
+        return csvFileInfo != null ? csvFileInfo.hashCode() : 0;
     }
 }

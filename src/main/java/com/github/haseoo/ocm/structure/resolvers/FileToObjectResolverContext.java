@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class FileToObjectResolverContext implements  EntityIdResolver, EntityClassResolver {
 
@@ -94,5 +95,9 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
         }
         var idField = resolvedClasses.get(type).getId().orElseThrow(() -> new IdFiledNotFound(type));
         return idField.toCsvStringValue(object);
+    }
+
+    public List<?> getObjectOfClass(Class<?> clazz) {
+        return csvObjects.get(clazz).values().stream().map(CsvStringObject::getObject).collect(Collectors.toList());
     }
 }

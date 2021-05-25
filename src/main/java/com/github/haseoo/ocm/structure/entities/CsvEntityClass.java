@@ -175,7 +175,7 @@ public class CsvEntityClass {
                                              EntityClassResolver entityClassResolver,
                                              EntityIdResolver entityIdResolver,
                                              MappingContext mappingContext) throws CsvMappingException {
-        if (type == null || type.getAnnotation(CsvEntity.class) == null || type.equals(Object.class)) {
+        if (type == null || type.equals(Object.class)) {
             return null;
         }
         if (entityClassResolver.isClassEntityRegistered(type)) {
@@ -247,5 +247,5 @@ public class CsvEntityClass {
         return csvField;
     }
 
-    public static final String TYPE_HEADER_NAME = "@ENTITY_TYPE";
+    public static final String TYPE_HEADER_NAME = "#ENTITY_TYPE";
 }

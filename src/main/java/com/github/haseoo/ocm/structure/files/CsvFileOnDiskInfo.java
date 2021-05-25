@@ -4,8 +4,8 @@ import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import lombok.Value;
 
 @Value
-public class CsvFileInfoImpl implements CsvFileInfo {
-    public CsvFileInfoImpl(CsvEntityClass csvEntityClass, String filePath) {
+public class CsvFileOnDiskInfo implements CsvFileInfo {
+    public CsvFileOnDiskInfo(CsvEntityClass csvEntityClass, String filePath) {
         this.filePath = filePath;
         fileName = csvEntityClass.getName();
     }
@@ -15,7 +15,7 @@ public class CsvFileInfoImpl implements CsvFileInfo {
 
     @Override
     public String getFilePath() {
-        return filePath;
+        return String.format("%s/%s.csv", filePath, fileName);
     }
 
     @Override
