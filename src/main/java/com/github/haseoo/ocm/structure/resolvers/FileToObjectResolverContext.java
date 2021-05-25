@@ -1,7 +1,7 @@
 package com.github.haseoo.ocm.structure.resolvers;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.api.exceptions.IdFiledNotFound;
+import com.github.haseoo.ocm.api.exceptions.IdFiledNotFoundException;
 import com.github.haseoo.ocm.structure.CsvStringObject;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
@@ -45,7 +45,7 @@ public class FileToObjectResolverContext implements EntityIdResolver, EntityClas
             public Object apply(CsvValueField field) {
                 return field.toObjectValue(fieldValues);
             }
-        }).orElse(null);
+        }).orElse(UUID.randomUUID());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class FileToObjectResolverContext implements EntityIdResolver, EntityClas
             throw new CsvMappingException(String.format("Entity of class %s not registered", type.getCanonicalName()));
         }
         var entityClass = resolvedClasses.get(type);
-        var objId = entityClass.getId().orElseThrow(() -> new IdFiledNotFound(type)).toObjectValue(stringId);
+        var objId = entityClass.getId().orElseThrow(() -> new IdFiledNotFoundException(type)).toObjectValue(stringId);
         return getObjectByIdInClassTree(objId, entityClass)
                 .orElseThrow(() -> new CsvMappingException(String.format("Object with id %s not found", objId)));
     }
@@ -79,7 +79,7 @@ public class FileToObjectResolverContext implements EntityIdResolver, EntityClas
         if (!resolvedClasses.containsKey(type)) {
             throw new CsvMappingException(String.format("Entity of class %s not found", type.getCanonicalName()));
         }
-        var idField = resolvedClasses.get(type).getId().orElseThrow(() -> new IdFiledNotFound(type));
+        var idField = resolvedClasses.get(type).getId().orElseThrow(() -> new IdFiledNotFoundException(type));
         return idField.toCsvStringValue(object);
     }
 

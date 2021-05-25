@@ -2,7 +2,7 @@ package com.github.haseoo.ocm.internal.utils;
 
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvTransient;
-import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
+import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntityException;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.FieldIsNotACollectionException;
 import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
@@ -69,9 +69,9 @@ public class ReflectionUtils {
         }
     }
 
-    public static void validateRelationClass(Class<?> relationEndEntityType) throws ClassIsNotAnCsvEntity {
+    public static void validateRelationClass(Class<?> relationEndEntityType) throws ClassIsNotAnCsvEntityException {
         if (!relationEndEntityType.isAnnotationPresent(CsvEntity.class)) {
-            throw new ClassIsNotAnCsvEntity(relationEndEntityType);
+            throw new ClassIsNotAnCsvEntityException(relationEndEntityType);
         }
     }
 

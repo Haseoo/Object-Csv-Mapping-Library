@@ -101,7 +101,7 @@ public final class CsvOneToManyField implements CsvField {
     public static CsvOneToManyField newInstance(Class<?> relationBeginEntityType,
                                                 Field relationBeginField,
                                                 EntityIdResolver resolverContext) throws
-            ClassIsNotAnCsvEntity,
+            ClassIsNotAnCsvEntityException,
             RelationEndNotPresentException,
             FieldIsNotACollectionException {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvOneToMany.class);

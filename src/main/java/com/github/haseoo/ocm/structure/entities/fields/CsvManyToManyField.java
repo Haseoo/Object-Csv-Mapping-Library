@@ -133,7 +133,7 @@ public final class CsvManyToManyField implements CsvField {
                                                  EntityIdResolver resolverContext,
                                                  String delimiter) throws
             FieldIsNotACollectionException,
-            RelationEndNotPresentException, ClassIsNotAnCsvEntity {
+            RelationEndNotPresentException, ClassIsNotAnCsvEntityException {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvManyToMany.class);
         validateCollectionRelation(relationBeginField.getType(), fieldAnnotation.fieldName());
         var relationEndEntityType = ReflectionUtils.getActualTypeArgument(relationBeginField);

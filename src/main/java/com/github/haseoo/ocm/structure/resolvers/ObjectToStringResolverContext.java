@@ -1,7 +1,7 @@
 package com.github.haseoo.ocm.structure.resolvers;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.api.exceptions.IdFiledNotFound;
+import com.github.haseoo.ocm.api.exceptions.IdFiledNotFoundException;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.files.CsvEntityFile;
 import org.apache.commons.lang3.NotImplementedException;
@@ -72,7 +72,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver, EntityCl
         if (entityClass == null) {
             throw new CsvMappingException("Entity not present");
         }
-        var idField = entityClass.getId().orElseThrow(() -> new IdFiledNotFound(type));
+        var idField = entityClass.getId().orElseThrow(() -> new IdFiledNotFoundException(type));
         return idField.toCsvStringValue(object);
     }
 

@@ -2,7 +2,7 @@ package com.github.haseoo.ocm.structure.entities.fields;
 
 import com.github.haseoo.ocm.api.annotation.CsvManyToOne;
 import com.github.haseoo.ocm.api.annotation.CsvOneToMany;
-import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
+import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntityException;
 import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
 import com.github.haseoo.ocm.api.exceptions.FieldIsNotACollectionException;
 import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
@@ -83,7 +83,7 @@ public final class CsvManyToOneField implements CsvField {
     public static CsvManyToOneField newInstance(Class<?> relationBeginEntityType,
                                                 Field relationBeginField) throws
             FieldIsNotACollectionException,
-            RelationEndNotPresentException, ClassIsNotAnCsvEntity {
+            RelationEndNotPresentException, ClassIsNotAnCsvEntityException {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvManyToOne.class);
         validateCollectionRelation(relationBeginField.getType(), fieldAnnotation.fieldName());
         var relationEndEntityType = ReflectionUtils.getActualTypeArgument(relationBeginField);

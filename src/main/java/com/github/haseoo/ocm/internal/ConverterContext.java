@@ -1,7 +1,7 @@
 package com.github.haseoo.ocm.internal;
 
 import com.github.haseoo.ocm.api.converter.TypeConverter;
-import com.github.haseoo.ocm.api.exceptions.ConverterNotPreset;
+import com.github.haseoo.ocm.api.exceptions.ConverterNotPresetException;
 import com.github.haseoo.ocm.internal.converter.*;
 
 import java.math.BigDecimal;
@@ -43,17 +43,17 @@ public class ConverterContext {
         converters.put(type, converter);
     }
 
-    public Object convertToObject(Class<?> type, String value, String formatter) throws ConverterNotPreset {
+    public Object convertToObject(Class<?> type, String value, String formatter) throws ConverterNotPresetException {
         if (!converters.containsKey(type)) {
-            throw new ConverterNotPreset(type);
+            throw new ConverterNotPresetException(type);
         }
         return converters.get(type).convertToType(value, formatter);
     }
 
     @SuppressWarnings("unchecked")
-    public String convertToString(Class<?> type, Object value, String formatter) throws ConverterNotPreset {
+    public String convertToString(Class<?> type, Object value, String formatter) throws ConverterNotPresetException {
         if (!converters.containsKey(type)) {
-            throw new ConverterNotPreset(type);
+            throw new ConverterNotPresetException(type);
         }
         return converters.get(type).convertToString(value, formatter);
     }

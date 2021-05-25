@@ -19,13 +19,13 @@ import java.util.function.Function;
 
 @Data
 public class CsvEntityClass {
-    private CsvEntityClass(Class<?> type) throws ClassIsNotAnCsvEntity {
+    private CsvEntityClass(Class<?> type) throws ClassIsNotAnCsvEntityException {
         this.type = type;
         subClasses = new ArrayList<>();
         fields = new ArrayList<>();
         var entityAnnotation = type.getDeclaredAnnotation(CsvEntity.class);
         if (entityAnnotation == null) {
-            throw new ClassIsNotAnCsvEntity(type);
+            throw new ClassIsNotAnCsvEntityException(type);
         }
         this.name = entityAnnotation.name().isEmpty() ? type.getSimpleName() : entityAnnotation.name();
     }
@@ -226,7 +226,7 @@ public class CsvEntityClass {
                                          Field entityField,
                                          EntityIdResolver resolverContext,
                                          MappingContext mappingContext) throws
-            ClassIsNotAnCsvEntity,
+            ClassIsNotAnCsvEntityException,
             FieldIsNotACollectionException,
             RelationEndNotPresentException {
         CsvField csvField;

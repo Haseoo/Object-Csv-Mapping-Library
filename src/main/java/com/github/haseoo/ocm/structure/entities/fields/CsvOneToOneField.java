@@ -91,7 +91,7 @@ public final class CsvOneToOneField implements CsvField {
     public static CsvOneToOneField newInstance(Class<?> relationBeginEntityType,
                                                Field relationBeginField,
                                                EntityIdResolver resolverContext)
-            throws ClassIsNotAnCsvEntity,
+            throws ClassIsNotAnCsvEntityException,
             RelationEndNotPresentException {
         var fieldAnnotation = relationBeginField.getAnnotation(CsvOneToOne.class);
         var relationEndEntityType = relationBeginField.getType();
