@@ -12,8 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getRelationField;
-import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.validateRelationClass;
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.*;
 
 public final class CsvOneToManyField implements CsvField {
     private final EntityIdResolver entityIdResolver;
@@ -36,8 +35,22 @@ public final class CsvOneToManyField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
-        return entityIdResolver.getObjectById(fields.get(getColumnName()), beginRelation.getType());
+    public void setObjectField(Object dest, Map<String, String> fields) throws CsvMappingException {
+        if (!fields.containsKey(getColumnName())) {
+            throw new ColumnNotFoundException(getColumnName());
+        }
+        if (isEmptyField(fields)) {
+            return;
+        }
+        var endRelationObject = entityIdResolver.getObjectById(fields.get(getColumnName()),
+                beginRelation.getType());
+        setObjectFiled(dest, endRelationObject, getFieldName(), getFieldType());
+        var relationBeginFieldValue = ReflectionUtils.getFieldValue(endRelationObject, endRelation.getFieldName());
+        if (relationBeginFieldValue == null) {
+            throw new CollectionNotInitializedException(getFieldName(), getFieldType());
+        }
+        var collection = (Collection<Object>) relationBeginFieldValue;
+        collection.add(dest);
     }
 
     @Override
@@ -58,6 +71,10 @@ public final class CsvOneToManyField implements CsvField {
     @Override
     public boolean appendToFile() {
         return true;
+    }
+
+    private boolean isEmptyField(Map<String, String> fields) {
+        return fields.get(getColumnName()).equals("");
     }
 
     @Override

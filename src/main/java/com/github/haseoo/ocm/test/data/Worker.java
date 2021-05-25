@@ -21,4 +21,6 @@ public class Worker {
     private Chip chip;
     @CsvManyToOne(fieldName = "worker")
     private List<Issue> issues = new ArrayList<>();
+
+
 }

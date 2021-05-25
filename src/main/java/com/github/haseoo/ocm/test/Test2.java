@@ -12,6 +12,9 @@ public class Test2 {
     public static void main(String[] args) throws CsvMappingException, IOException {
         var mapper = new CsvMapper("C:\\Users\\dawid\\Desktop\\test", ";");
         mapper.registerConverter(Chip.class, new ChipConverter());
-        System.out.println(mapper.filesToList(Worker.class));
+        var out = mapper.filesToList(Worker.class);
+        var mapper2 = new CsvMapper("C:\\Users\\dawid\\Desktop\\test2", ";");
+        mapper2.registerConverter(Chip.class, new ChipConverter());
+        mapper2.listToFiles(out);
     }
 }

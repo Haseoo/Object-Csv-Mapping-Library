@@ -74,22 +74,6 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
                 .orElseThrow(() -> new CsvMappingException(String.format("Object with id %s not found", objId)));
     }
 
-    public Optional<Object> getObjectByIdInClassTree(Object id, CsvEntityClass root) {
-        if (csvObjects.containsKey(root.getType())) {
-            var obj = csvObjects.get(root.getType()).get(id);
-            if (obj != null) {
-                return Optional.of(obj);
-            }
-        }
-        for (CsvEntityClass subClass : root.getSubClasses()) {
-            var obj  = getObjectByIdInClassTree(id, subClass);
-            if (obj.isPresent()) {
-                return obj;
-            }
-        }
-        return Optional.empty();
-    }
-
     @Override
     public String getObjectId(Object object, Class<?> type) throws CsvMappingException {
         if (!resolvedClasses.containsKey(type)) {
@@ -101,5 +85,25 @@ public class FileToObjectResolverContext implements  EntityIdResolver, EntityCla
 
     public List<Object> getObjectOfClass(Class<?> clazz) {
         return csvObjects.get(clazz).values().stream().map(CsvStringObject::getObject).collect(Collectors.toList());
+    }
+
+    public List<CsvStringObject> getAllRegisteredObjects() {
+        return csvObjects.values().stream().flatMap(e -> e.values().stream()).collect(Collectors.toList());
+    }
+
+    public Optional<Object> getObjectByIdInClassTree(Object id, CsvEntityClass root) {
+        if (csvObjects.containsKey(root.getType())) {
+            var obj = csvObjects.get(root.getType()).get(id);
+            if (obj != null) {
+                return Optional.of(obj.getObject());
+            }
+        }
+        for (CsvEntityClass subClass : root.getSubClasses()) {
+            var obj = getObjectByIdInClassTree(id, subClass);
+            if (obj.isPresent()) {
+                return obj;
+            }
+        }
+        return Optional.empty();
     }
 }

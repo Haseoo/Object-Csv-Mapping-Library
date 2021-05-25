@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 public interface CsvField {
     String toCsvStringValue(Object entityObject) throws CsvMappingException;
 
-    Object toObjectValue(Map<String, String> row) throws CsvMappingException;
+    void setObjectField(Object dest, Map<String, String> row) throws CsvMappingException;
 
     String getFieldName();
 

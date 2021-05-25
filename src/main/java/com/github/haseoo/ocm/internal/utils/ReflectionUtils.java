@@ -80,7 +80,7 @@ public class ReflectionUtils {
                                       Object value,
                                       String fieldName,
                                       Class<?> fieldType) throws CsvMappingException {
-        var getterName = String.format("get%s", fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
+        var getterName = String.format("set%s", fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1));
         try {
             obj.getClass().getMethod(getterName, fieldType).invoke(obj, value);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

@@ -36,15 +36,23 @@ public final class CsvValueField implements CsvField {
     }
 
     @Override
+    public void setObjectField(Object dest, Map<String, String> row) throws CsvMappingException {
+        if (!row.containsKey(getColumnName())) {
+            throw new ColumnNotFoundException(getColumnName());
+        }
+        var value = toObjectValue(row.get(getColumnName()));
+        ReflectionUtils.setObjectFiled(dest, value, getFieldName(), getFieldType());
+    }
+
     public Object toObjectValue(Map<String, String> row) throws CsvMappingException {
         if (!row.containsKey(getColumnName())) {
             throw new ColumnNotFoundException(getColumnName());
         }
-        return converterContext.convertToObject(fieldType, row.get(getColumnName()), formatter);
+        return toObjectValue(row.get(getColumnName()));
     }
 
     public Object toObjectValue(String value) throws CsvMappingException {
-        return converterContext.convertToObject(fieldType, value, formatter);
+        return value.equals("") ? null : converterContext.convertToObject(fieldType, value, formatter);
     }
 
     @Override

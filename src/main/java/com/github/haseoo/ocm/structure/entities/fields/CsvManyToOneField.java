@@ -33,8 +33,8 @@ public final class CsvManyToOneField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(Map<String, String> fields) {
-        throw new AssertionError("This relation is resolved by one-to-many side!");
+    public void setObjectField(Object dest, Map<String, String> fields) {
+        throw new AssertionError("This relation is resolved by one-to-many side, check appendToFile() first");
     }
 
     @Override

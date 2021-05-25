@@ -1,10 +1,7 @@
 package com.github.haseoo.ocm.structure.entities.fields;
 
 import com.github.haseoo.ocm.api.annotation.CsvOneToOne;
-import com.github.haseoo.ocm.api.exceptions.ClassIsNotAnCsvEntity;
-import com.github.haseoo.ocm.api.exceptions.ConstraintViolationException;
-import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.api.exceptions.RelationEndNotPresentException;
+import com.github.haseoo.ocm.api.exceptions.*;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
 import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 
@@ -13,8 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.getRelationField;
-import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.validateRelationClass;
+import static com.github.haseoo.ocm.internal.utils.ReflectionUtils.*;
 
 public final class CsvOneToOneField implements CsvField {
     private final EntityIdResolver entityIdResolver;
@@ -38,8 +34,17 @@ public final class CsvOneToOneField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
-        return entityIdResolver.getObjectById(fields.get(getColumnName()), beginRelation.getType());
+    public void setObjectField(Object dest, Map<String, String> fields) throws CsvMappingException {
+        if (!fields.containsKey(getColumnName())) {
+            throw new ColumnNotFoundException(getColumnName());
+        }
+        var stringValue = fields.get(getColumnName());
+        if (stringValue.equals(""))
+            return;
+        var endRelationObject = entityIdResolver.getObjectById(stringValue,
+                beginRelation.getType());
+        setObjectFiled(dest, endRelationObject, getFieldName(), getFieldType());
+        setObjectFiled(endRelationObject, dest, endRelation.getFieldName(), endRelation.getType());
     }
 
     @Override

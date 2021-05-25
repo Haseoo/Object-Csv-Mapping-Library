@@ -46,8 +46,18 @@ public final class CsvManyToManyField implements CsvField {
     }
 
     @Override
-    public Object toObjectValue(Map<String, String> fields) throws CsvMappingException {
-        throw new NotImplementedException("TODO"); //TODO
+    @SuppressWarnings("unchecked")
+    public void setObjectField(Object dest, Map<String, String> fields) throws CsvMappingException {
+        if (!fields.containsKey(getColumnName())) {
+            throw new ColumnNotFoundException(getColumnName());
+        }
+        var endRelationObjs = getIds(fields);
+        var relationBeginFieldValue = ReflectionUtils.getFieldValue(dest, getFieldName());
+        if (relationBeginFieldValue == null) {
+            throw new CollectionNotInitializedException(getFieldName(), getFieldType());
+        }
+        var collection = (Collection<Object>) relationBeginFieldValue;
+        collection.addAll(endRelationObjs);
     }
 
     @Override
@@ -68,6 +78,10 @@ public final class CsvManyToManyField implements CsvField {
     @Override
     public boolean appendToFile() {
         return true;
+    }
+
+    private boolean isIdFieldEmpty(String stringId) {
+        return stringId.equals("");
     }
 
     @Override
@@ -91,6 +105,28 @@ public final class CsvManyToManyField implements CsvField {
             }
             relationEndObjects.forEach(appendObject);
         }
+    }
+
+    private ArrayList<Object> getIds(Map<String, String> fields) throws CsvMappingException {
+        String[] idStrings = getStringIds(fields);
+        return resolveStringIds(idStrings);
+    }
+
+    private ArrayList<Object> resolveStringIds(String[] idStrings) throws CsvMappingException {
+        var endRelationObjs = new ArrayList<>();
+        for (String stringId : idStrings) {
+            if (isIdFieldEmpty(stringId)) {
+                continue;
+            }
+            endRelationObjs.add(entityIdResolver.getObjectById(stringId, getFieldType()));
+        }
+        return endRelationObjs;
+    }
+
+    private String[] getStringIds(Map<String, String> fields) {
+        var idStringList = fields.get(getColumnName());
+        idStringList = idStringList.substring(1, idStringList.length() - 1); //removes []
+        return idStringList.split(delimiter);
     }
 
     public static CsvManyToManyField newInstance(Class<?> relationBeginEntityType,
