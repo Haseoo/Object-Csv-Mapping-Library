@@ -47,7 +47,7 @@ public class ConverterContext {
         if (!converters.containsKey(type)) {
             throw new ConverterNotPresetException(type);
         }
-        return converters.get(type).convertToType(value, formatter);
+        return converters.get(type).convertToTypeObject(value, formatter);
     }
 
     @SuppressWarnings("unchecked")

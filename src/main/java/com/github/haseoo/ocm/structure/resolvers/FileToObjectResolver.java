@@ -3,11 +3,11 @@ package com.github.haseoo.ocm.structure.resolvers;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.internal.MappingContext;
 import com.github.haseoo.ocm.internal.utils.ReflectionUtils;
-import com.github.haseoo.ocm.structure.CsvStringObject;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
-import com.github.haseoo.ocm.structure.entities.fields.CsvField;
+import com.github.haseoo.ocm.structure.entities.CsvStringObject;
 import com.github.haseoo.ocm.structure.files.CsvFile;
 import com.github.haseoo.ocm.structure.files.CsvFilesManager;
+import com.github.haseoo.ocm.structure.resolvers.contexts.FileToObjectResolverContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -101,11 +101,8 @@ public final class FileToObjectResolver<T> {
 
     private void resolveFields() throws CsvMappingException {
         for (CsvStringObject registeredObject : context.getAllRegisteredObjects()) {
-            for (CsvField csvField : registeredObject.getEntityClass().getFieldsWithInheritance()) {
-                if (csvField.appendToFile()) {
-                    csvField.setObjectField(registeredObject.getObject(), registeredObject.getCsvRow());
-                }
-            }
+            registeredObject.getEntityClass().fillObjectFields(registeredObject.getObject(),
+                    registeredObject.getCsvRow());
         }
     }
 

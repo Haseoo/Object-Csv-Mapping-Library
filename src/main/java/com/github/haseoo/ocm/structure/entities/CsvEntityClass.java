@@ -98,6 +98,14 @@ public class CsvEntityClass {
         return valuesMap;
     }
 
+    public void fillObjectFields(Object registeredObject, Map<String, String> csvRow) throws CsvMappingException {
+        for (CsvField csvField : getFieldsWithInheritance()) {
+            if (csvField.appendToFile()) {
+                csvField.setObjectField(registeredObject, csvRow);
+            }
+        }
+    }
+
     private String getColumnName(CsvField csvField, Function<Class<?>,
             Optional<String>> fileNameResolver) {
         var columnName = new StringBuilder(csvField.getColumnName());

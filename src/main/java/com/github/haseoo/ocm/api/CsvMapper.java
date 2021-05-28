@@ -23,6 +23,10 @@ public class CsvMapper {
 
     }
 
+    public CsvMapper(String delimiter) {
+        mappingContext = new MappingContext("", delimiter);
+    }
+
     public <T> void registerConverter(Class<T> clazz, TypeConverter<T> converter) {
         mappingContext.registerConverter(clazz, converter);
     }

@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class UUIDConverter implements TypeConverter<UUID> {
     @Override
-    public UUID convertToType(String value, String formatter) {
+    public UUID convertToTypeObject(String value, String formatter) {
         return UUID.fromString(value);
     }
 

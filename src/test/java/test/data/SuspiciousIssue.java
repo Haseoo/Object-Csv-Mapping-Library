@@ -1,4 +1,4 @@
-package com.github.haseoo.ocm.test.data;
+package test.data;
 
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvManyToMany;
@@ -13,8 +13,8 @@ import java.util.List;
 @Data
 public class SuspiciousIssue extends Issue {
     private double suspicionLevel;
-    @CsvManyToMany(fieldName = "suspiciousIssuesNormalItems")
+    @CsvManyToMany(endFieldName = "suspiciousIssuesNormalItems")
     private List<Item> normalItems = new ArrayList<>();
-    @CsvManyToMany(fieldName = "suspiciousIssuesSuspiciousItems")
+    @CsvManyToMany(endFieldName = "suspiciousIssuesSuspiciousItems")
     private List<Item> suspiciousItems = new ArrayList<>();
 }

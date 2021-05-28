@@ -4,7 +4,7 @@ import com.github.haseoo.ocm.api.converter.TypeConverter;
 
 public class LongConverter implements TypeConverter<Long> {
     @Override
-    public Long convertToType(String value, String formatter) {
+    public Long convertToTypeObject(String value, String formatter) {
         return Long.parseLong(value);
     }
 

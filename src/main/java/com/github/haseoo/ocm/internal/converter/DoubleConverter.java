@@ -10,7 +10,7 @@ public class DoubleConverter implements TypeConverter<Double> {
 
     @SneakyThrows
     @Override
-    public Double convertToType(String value, String formatter) {
+    public Double convertToTypeObject(String value, String formatter) {
         if (formatter == null) {
             return Double.parseDouble(value);
         }

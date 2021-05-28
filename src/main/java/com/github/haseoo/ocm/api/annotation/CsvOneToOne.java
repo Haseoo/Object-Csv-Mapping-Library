@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CsvOneToOne {
-    String fieldName();
+    String endFieldName();
 
     boolean appendToFile() default false;
 }

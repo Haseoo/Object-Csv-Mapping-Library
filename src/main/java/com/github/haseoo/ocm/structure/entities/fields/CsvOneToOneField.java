@@ -97,13 +97,13 @@ public final class CsvOneToOneField implements CsvField {
         var relationEndEntityType = relationBeginField.getType();
         validateRelationClass(relationEndEntityType);
         Field endRelationField = getRelationField(relationEndEntityType,
-                fieldAnnotation.fieldName(),
+                fieldAnnotation.endFieldName(),
                 fieldAnnotation.annotationType());
         if (!endRelationField.isAnnotationPresent(CsvOneToOne.class) ||
                 endRelationField.getType() != relationBeginEntityType) {
             throw new RelationEndNotPresentException(fieldAnnotation.annotationType(),
                     relationEndEntityType,
-                    fieldAnnotation.fieldName());
+                    fieldAnnotation.endFieldName());
         }
         return new CsvOneToOneField(resolverContext, relationBeginField, endRelationField);
     }

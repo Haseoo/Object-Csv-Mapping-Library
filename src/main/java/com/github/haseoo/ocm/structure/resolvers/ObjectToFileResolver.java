@@ -5,6 +5,7 @@ import com.github.haseoo.ocm.internal.MappingContext;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import com.github.haseoo.ocm.structure.files.CsvEntityFile;
 import com.github.haseoo.ocm.structure.files.CsvFile;
+import com.github.haseoo.ocm.structure.resolvers.contexts.ObjectToStringResolverContext;
 
 import java.util.ArrayList;
 import java.util.List;

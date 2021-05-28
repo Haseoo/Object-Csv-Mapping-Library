@@ -6,7 +6,7 @@ import java.math.BigInteger;
 
 public class BigIntegerConverter implements TypeConverter<BigInteger> {
     @Override
-    public BigInteger convertToType(String value, String formatter) {
+    public BigInteger convertToTypeObject(String value, String formatter) {
         return new BigInteger(value);
     }
 

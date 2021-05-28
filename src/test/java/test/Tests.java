@@ -1,15 +1,49 @@
-package com.github.haseoo.ocm.test;
+package test;
 
 import com.github.haseoo.ocm.api.CsvMapper;
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.test.data.*;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import test.data.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class Test {
-    public static void main(String[] args) throws CsvMappingException, IOException {
+public class Tests {
+
+    @Test
+    void complexEntitiesTest() throws CsvMappingException, IOException {
+        var mapper = new CsvMapper("", ";");
+        mapper.registerConverter(Chip.class, new ChipConverter());
+        var in = getWorkers();
+        var files = mapper.listToCsvInMemoryFile(in);
+        var out = mapper.filesToList(Worker.class, files);
+        Assertions.assertThat(out).containsAll(in);
+    }
+
+    @Test
+    void simpleEntityTest() throws CsvMappingException, IOException {
+        ArrayList<SimpleDataClass> in = getSimpleDataClasses();
+        var mapper = new CsvMapper(";");
+        var files = mapper.listToCsvInMemoryFile(in);
+        var out = mapper.filesToList(SimpleDataClass.class, files);
+        Assertions.assertThat(out).containsAll(in);
+    }
+
+    private static ArrayList<SimpleDataClass> getSimpleDataClasses() {
+        var in = new ArrayList<SimpleDataClass>();
+        in.add(new SimpleDataClass(null, "test", 5, LocalDateTime.of(2021, 1, 1, 3, 5)));
+        in.add(new SimpleDataClass(1L, null, 5, LocalDateTime.of(2019, 1, 1, 3, 5)));
+        in.add(new SimpleDataClass(2137L, "test2", null, LocalDateTime.of(2021, 1, 1, 3, 5)));
+        in.add(new SimpleDataClass(5L, "test2", 14, null));
+        return in;
+    }
+
+    private static List<Worker> getWorkers() {
         var boss = new Worker();
         boss.setId(0);
         boss.setName("Tomasz");
@@ -105,14 +139,6 @@ public class Test {
         item1.getSuspiciousIssuesNormalItems().add(susIssue);
         item2.getSuspiciousIssuesNormalItems().add(susIssue);
         item6.getSuspiciousIssuesSuspiciousItems().add(susIssue);
-
-        var mapper = new CsvMapper("", ";");
-        mapper.registerConverter(Chip.class, new ChipConverter());
-        // mapper.listToFiles(Arrays.asList(issue1, issue2, issue3, susIssue));
-        var inMemFiles = mapper.listToCsvInMemoryFile(Arrays.asList(issue1, issue2, issue3, susIssue));
-        System.out.println(inMemFiles);
-        var mapper2 = new CsvMapper("", ";");
-        var list = mapper.filesToList(Worker.class, inMemFiles);
-        System.out.println(list.get(0).getName());
+        return Arrays.asList(boss, worker1, worker2, worker3);
     }
 }

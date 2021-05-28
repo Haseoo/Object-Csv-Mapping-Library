@@ -10,7 +10,7 @@ public class FloatConverter implements TypeConverter<Float> {
 
     @SneakyThrows
     @Override
-    public Float convertToType(String value, String formatter) {
+    public Float convertToTypeObject(String value, String formatter) {
         if (formatter == null) {
             return Float.parseFloat(value);
         }

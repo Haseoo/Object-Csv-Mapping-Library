@@ -1,7 +1,6 @@
-package com.github.haseoo.ocm.structure;
+package com.github.haseoo.ocm.structure.entities;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
-import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Value;

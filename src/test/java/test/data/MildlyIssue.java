@@ -1,4 +1,4 @@
-package com.github.haseoo.ocm.test.data;
+package test.data;
 
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvManyToMany;
@@ -13,6 +13,6 @@ import java.util.List;
 @Data
 public class MildlyIssue extends Issue {
     private int asinineCount;
-    @CsvManyToMany(fieldName = "mildlyIssues")
+    @CsvManyToMany(endFieldName = "mildlyIssues")
     private List<Item> items = new ArrayList<>();
 }

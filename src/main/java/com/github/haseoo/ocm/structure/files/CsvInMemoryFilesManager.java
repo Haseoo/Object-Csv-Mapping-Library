@@ -15,7 +15,7 @@ public class CsvInMemoryFilesManager implements CsvFilesManager {
     @Override
     public CsvFile getFileForEntity(CsvEntityClass entityClass) throws IOException {
         var inMemoryFile = files.stream()
-                .filter(file -> file.getFileName()
+                .filter(file -> file.getName()
                         .equals(entityClass.getName() + ".csv"))
                 .findFirst();
         if (inMemoryFile.isPresent()) {

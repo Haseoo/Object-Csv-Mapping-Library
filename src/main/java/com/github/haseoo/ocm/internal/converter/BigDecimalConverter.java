@@ -11,7 +11,7 @@ public class BigDecimalConverter implements TypeConverter<BigDecimal> {
 
     @SneakyThrows
     @Override
-    public BigDecimal convertToType(String value, String formatter) {
+    public BigDecimal convertToTypeObject(String value, String formatter) {
         if (formatter == null) {
             return new BigDecimal(value);
         }

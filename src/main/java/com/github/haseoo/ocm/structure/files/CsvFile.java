@@ -53,7 +53,7 @@ public class CsvFile {
                 .withCSVParser(parser).build()) {
             List<String[]> data = csvReader.readAll();
             if (data.isEmpty()) {
-                throw new IOException(String.format("File %s has no content", inMemoryCsvFile.getFileName()));
+                throw new IOException(String.format("File %s has no content", inMemoryCsvFile.getName()));
             }
             HashMap<String, Integer> headerWithoutRelations = prepareHeader(headerWithRelations, data);
             return new CsvFile(inMemoryCsvFile, data, headerWithoutRelations, headerWithRelations);

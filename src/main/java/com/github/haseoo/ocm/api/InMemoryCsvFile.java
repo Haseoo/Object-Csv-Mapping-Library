@@ -6,14 +6,14 @@ import lombok.Value;
 
 @Value
 public class InMemoryCsvFile implements CsvFileInfo {
-    String fileName;
+    String name;
     String[] data;
 
     @Override
     public String toString() {
         var builder = new StringBuilder();
         builder.append("InMemoryCsvFile:");
-        builder.append(String.format("%nfileName:%s%n", fileName));
+        builder.append(String.format("%nfileName:%s%n", name));
         builder.append("data:\n");
         for (String datum : data) {
             builder.append(datum);
@@ -24,11 +24,11 @@ public class InMemoryCsvFile implements CsvFileInfo {
 
     @Override
     public String getFilePath() {
-        return fileName;
+        return name;
     }
 
     @Override
     public String getName() {
-        return fileName;
+        return name;
     }
 }

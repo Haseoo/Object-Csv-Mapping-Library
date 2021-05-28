@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateConverter implements TypeConverter<LocalDate> {
     @Override
-    public LocalDate convertToType(String value, String formatter) {
+    public LocalDate convertToTypeObject(String value, String formatter) {
         return LocalDate.parse(value, DateTimeFormatter.ofPattern(formatter));
     }
 

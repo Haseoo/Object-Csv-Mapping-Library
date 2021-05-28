@@ -4,7 +4,7 @@ import com.github.haseoo.ocm.api.converter.TypeConverter;
 
 public class IntConverter implements TypeConverter<Integer> {
     @Override
-    public Integer convertToType(String value, String formatter) {
+    public Integer convertToTypeObject(String value, String formatter) {
         return Integer.parseInt(value);
     }
 

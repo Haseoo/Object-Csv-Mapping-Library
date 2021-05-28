@@ -1,10 +1,12 @@
-package com.github.haseoo.ocm.structure.resolvers;
+package com.github.haseoo.ocm.structure.resolvers.contexts;
 
 import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.api.exceptions.IdFiledNotFoundException;
-import com.github.haseoo.ocm.structure.CsvStringObject;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
+import com.github.haseoo.ocm.structure.entities.CsvStringObject;
 import com.github.haseoo.ocm.structure.entities.fields.CsvValueField;
+import com.github.haseoo.ocm.structure.resolvers.EntityClassResolver;
+import com.github.haseoo.ocm.structure.resolvers.EntityIdResolver;
 import lombok.SneakyThrows;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package com.github.haseoo.ocm.test.data;
+package test.data;
 
 import com.github.haseoo.ocm.api.annotation.CsvEntity;
 import com.github.haseoo.ocm.api.annotation.CsvFormatter;

@@ -1,4 +1,4 @@
-package com.github.haseoo.ocm.test.data;
+package test.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;

@@ -108,18 +108,18 @@ public final class CsvOneToManyField implements CsvField {
         var relationEndEntityType = relationBeginField.getType();
         validateRelationClass(relationEndEntityType);
         Field endRelationField = getRelationField(relationEndEntityType,
-                fieldAnnotation.fieldName(),
+                fieldAnnotation.endFieldName(),
                 fieldAnnotation.annotationType());
         if (!ReflectionUtils.isClassCollection(endRelationField.getType())) {
             throw new FieldIsNotACollectionException(relationEndEntityType,
-                    fieldAnnotation.fieldName());
+                    fieldAnnotation.endFieldName());
         }
         var endRelationFieldCollectionType = ReflectionUtils.getActualTypeArgument(endRelationField);
         if (!endRelationField.isAnnotationPresent(CsvManyToOne.class) ||
                 endRelationFieldCollectionType != relationBeginEntityType) {
             throw new RelationEndNotPresentException(fieldAnnotation.annotationType(),
                     relationEndEntityType,
-                    fieldAnnotation.fieldName());
+                    fieldAnnotation.endFieldName());
         }
         return new CsvOneToManyField(resolverContext,
                 relationBeginField,
