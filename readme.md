@@ -63,3 +63,11 @@ The library generates the files with the following headers:
 - **Issues.csv** - issueId; worker@Worker.csv; openedAt; asinineCount; items@Items.csv; suspicionLevel; normalItems@Items.csv; suspiciousItems@Items.csv; #TYPE
 - **Items.csv**- id; name; mildlyIssues@Issues.csv; suspiciousIssuesNormalItems@Issues.csv; suspiciousIssuesSuspiciousItems@Issues.csv
 - **Worker.csv**- workerId; name; surname; supervisor@Worker.csv; chip
+
+The code:
+```java
+var mapper = new CsvMapper(";"); //sets mapper for files in memory instance
+mapper.registerConverter(Chip.class, new ChipConverter());
+var in = getWorkers(); //Generates data
+var files = mapper.listToCsvInMemoryFile(in); //returns in-memory files
+```
