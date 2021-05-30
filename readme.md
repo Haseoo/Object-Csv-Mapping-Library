@@ -68,6 +68,6 @@ The code:
 ```java
 var mapper = new CsvMapper(";"); //sets mapper for files in memory instance
 mapper.registerConverter(Chip.class, new ChipConverter());
-var in = getWorkers(); //Generates data
-var files = mapper.listToCsvInMemoryFile(in); //returns in-memory files
+List<Worker> in = getWorkers(); //Generates data
+List<InMemoryCsvFile> files = mapper.listToCsvInMemoryFile(in); //returns in-memory files
 ```
