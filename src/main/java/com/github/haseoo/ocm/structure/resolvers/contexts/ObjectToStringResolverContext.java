@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 
 public class ObjectToStringResolverContext implements EntityIdResolver, EntityClassResolver {
     private final Map<Class<?>, CsvEntityClass> registeredEntityClasses = new HashMap<>();
-    private final Map<Class<?>, List<Object>> resolvedObjects = new HashMap<>();
+    private final Map<Class<?>, Set<Object>> resolvedObjects = new HashMap<>();
     private final LinkedList<Object> objectsToResolve = new LinkedList<>();
     private final Map<Class<?>, CsvEntityFile> csvClassFileAssociation = new HashMap<>();
 
@@ -32,9 +32,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver, EntityCl
     }
 
     public void registerResolvedObject(Class<?> type, Object object) {
-        if (!resolvedObjects.containsKey(type)) {
-            resolvedObjects.put(type, new ArrayList<>());
-        }
+        resolvedObjects.computeIfAbsent(type, key -> new HashSet<>());
         resolvedObjects.get(type).add(object);
     }
 
@@ -64,8 +62,8 @@ public class ObjectToStringResolverContext implements EntityIdResolver, EntityCl
 
 
     @Override
-    public Object getObjectById(String id, Class<?> type) throws CsvMappingException {
-        throw new NotImplementedException("TODO!");
+    public Object getObjectById(String id, Class<?> type) {
+        throw new NotImplementedException("Invalid usage");
     }
 
     @Override
@@ -88,7 +86,7 @@ public class ObjectToStringResolverContext implements EntityIdResolver, EntityCl
         for (var baseEntityClass : baseEntityClasses) {
             var entityClasses = getEntityAllSubEntities(baseEntityClass);
             entityClasses.add(baseEntityClass);
-            var objects = new HashMap<CsvEntityClass, List<Object>>();
+            var objects = new HashMap<CsvEntityClass, Set<Object>>();
             for (CsvEntityClass entityClass : entityClasses) {
                 var entityObjects = resolvedObjects.get(entityClass.getType());
                 if (entityObjects != null) {

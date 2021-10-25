@@ -4,17 +4,14 @@ import com.github.haseoo.ocm.api.exceptions.CsvMappingException;
 import com.github.haseoo.ocm.structure.entities.CsvEntityClass;
 import lombok.Value;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 @Value
 public class CsvEntityFile implements CsvFileInfo {
     CsvEntityClass baseClass;
     String basePath;
-    Map<CsvEntityClass, List<Object>> objects;
+    Map<CsvEntityClass, Set<Object>> objects;
 
     @Override
     public String getFilePath() {
@@ -28,7 +25,7 @@ public class CsvEntityFile implements CsvFileInfo {
 
     public List<Map<String, String>> getValues() throws CsvMappingException {
         var resolvedList = new ArrayList<Map<String, String>>();
-        for (Map.Entry<CsvEntityClass, List<Object>> entry : objects.entrySet()) {
+        for (Map.Entry<CsvEntityClass, Set<Object>> entry : objects.entrySet()) {
             for (Object entityObject : entry.getValue()) {
                 resolvedList.add(entry.getKey().resolveObject(entityObject));
             }
